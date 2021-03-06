@@ -1,4 +1,4 @@
-package ru.volkov.guest.cabinet;
+package ru.volkov.guest.view.cabinet;
 
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
@@ -19,8 +19,5 @@ public class CabinetView extends AbstractView {
         add(new Button("SubContent", buttonClickEvent -> UI.getCurrent().navigate(SubContent.class)));
     }
 
-    @Override
-    public String getViewName() {
-        return getClass().getName();
-    }
+
 }

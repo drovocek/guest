@@ -1,4 +1,4 @@
-package ru.volkov.guest.settings;
+package ru.volkov.guest.view.settings;
 
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.router.PageTitle;
@@ -10,8 +10,5 @@ import ru.volkov.guest.MainAppLayout;
 @PageTitle("Settings")
 @Route(value = "settings", layout = MainAppLayout.class)
 public class SettingsView extends AbstractView {
-    @Override
-    public String getViewName() {
-        return getClass().getName();
-    }
+
 }

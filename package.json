@@ -54,7 +54,9 @@
       "@polymer/paper-tabs": "3.1.0",
       "@polymer/paper-badge": "3.0.1",
       "@polymer/paper-ripple": "3.0.2",
-      "@polymer/iron-overlay-behavior": "^3.0.3"
+      "@polymer/iron-overlay-behavior": "^3.0.3",
+      "cdigit": "2.5.6",
+      "chance": "1.1.7"
     },
     "devDependencies": {
       "webpack-babel-multi-target-plugin": "2.3.3",
@@ -67,7 +69,7 @@
       "webpack-merge": "4.2.2",
       "webpack-dev-server": "3.11.0"
     },
-    "hash": "887f9c8ff0e38d5a2cde571e0550d7c2fb376d5d00451ae39ec6d1213c9028f5"
+    "hash": "9fe63bda1f11129d9da8b14a6d8100749cdb7fc12c2ef26f3fa0ab53e71518c3"
   },
   "dependencies": {
     "lit-element": "^2.2.1",
@@ -121,7 +123,9 @@
     "@polymer/paper-tabs": "3.1.0",
     "@polymer/paper-badge": "3.0.1",
     "@polymer/paper-ripple": "3.0.2",
-    "@polymer/iron-overlay-behavior": "^3.0.3"
+    "@polymer/iron-overlay-behavior": "^3.0.3",
+    "cdigit": "2.5.6",
+    "chance": "1.1.7"
   },
   "devDependencies": {
     "webpack-babel-multi-target-plugin": "2.3.3",

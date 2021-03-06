@@ -16,13 +16,13 @@ import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.stereotype.Component;
-import ru.volkov.guest.cabinet.CabinetView;
-import ru.volkov.guest.getpass.GetPassView;
-import ru.volkov.guest.login.LoginView;
-import ru.volkov.guest.meet.MeetView;
-import ru.volkov.guest.registration.RegistrationView;
-import ru.volkov.guest.settings.SettingsView;
-import ru.volkov.guest.statistics.StatisticsView;
+import ru.volkov.guest.view.cabinet.CabinetView;
+import ru.volkov.guest.view.getpass.GetPassView;
+import ru.volkov.guest.view.login.LoginView;
+import ru.volkov.guest.view.meet.MeetView;
+import ru.volkov.guest.view.registration.RegistrationView;
+import ru.volkov.guest.view.settings.SettingsView;
+import ru.volkov.guest.view.statistics.StatisticsView;
 
 import static com.github.appreciated.app.layout.entity.Section.HEADER;
 
