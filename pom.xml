@@ -165,6 +165,18 @@
             <version>${appreciated.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.appreciated</groupId>
+            <artifactId>vaadin-css-grid</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.appreciated</groupId>
+            <artifactId>swiper-flow</artifactId>
+            <version>2.0.0.alpha3</version>
+        </dependency>
+
         <!--Addons-->
         <dependency>
             <groupId>org.projectlombok</groupId>

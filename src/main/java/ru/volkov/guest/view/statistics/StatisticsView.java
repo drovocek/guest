@@ -1,5 +1,10 @@
 package ru.volkov.guest.view.statistics;
 
+import com.github.appreciated.css.grid.GridLayoutComponent;
+import com.github.appreciated.css.grid.sizes.Length;
+import com.github.appreciated.css.grid.sizes.MinMax;
+import com.github.appreciated.css.grid.sizes.Repeat;
+import com.github.appreciated.layout.FlexibleGridLayout;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -28,23 +33,18 @@ public class StatisticsView extends PolymerTemplate<TemplateModel> {
     public StatisticsView(CarPassService service) {
         grid.addColumn(CarPass::getRegNum)
                 .setHeader("Registration Number")
-                .setAutoWidth(true)
                 .setSortProperty("regNum");
         grid.addColumn(CarPass::getCompanyName)
                 .setHeader("Company")
-                .setAutoWidth(true)
                 .setSortProperty("companyName");
         grid.addColumn(CarPass::getArrivalDate)
                 .setHeader("Arrival Date")
-                .setAutoWidth(true)
                 .setSortProperty("arrivalDate");
         grid.addColumn(CarPass::isPassed)
                 .setHeader("Passed")
-                .setAutoWidth(true)
                 .setSortProperty("passed");
         grid.setDataProvider(new CrudServiceDataProvider<>(service));
 
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
     }
-
 }

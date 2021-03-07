@@ -17,20 +17,24 @@ class GetPassView extends PolymerElement {
     static get template() {
         // language=HTML
         return html`
-            <h3>Pass info</h3>
-            <vaadin-form-layout style="width: 100%;">
-                <vaadin-vertical-layout>
+            <vaadin-form-layout>
+                <vaadin-form-item>
+                    <h3>Pass info</h3>
+                </vaadin-form-item>
+                <br>
+                <vaadin-form-item>
                     <vaadin-text-field label="Registration number" id="regNum"></vaadin-text-field>
+                </vaadin-form-item>
+                <br>
+                <vaadin-form-item>
                     <vaadin-date-picker label="Arrival date" id="arrivalDate"></vaadin-date-picker>
-                </vaadin-vertical-layout>
+                </vaadin-form-item>
+                <br>
+                <vaadin-form-item>
+                    <vaadin-button theme="primary success small" id="get" on-click="createCarPass">Get</vaadin-button>
+                    <vaadin-button theme="small" id="clear" on-click="clearForm">Clear</vaadin-button>
+                </vaadin-form-item>
             </vaadin-form-layout>
-            <vaadin-horizontal-layout
-                    style="margin-top: var(--lumo-space-m); margin-bottom: var(--lumo-space-l);"
-                    theme="spacing"
-            >
-                <vaadin-button theme="primary success small" id="get" on-click="createCarPass">Get</vaadin-button>
-                <vaadin-button theme="small" id="clear" on-click="clearForm">Clear</vaadin-button>
-            </vaadin-horizontal-layout>
         `;
     }
 

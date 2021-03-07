@@ -29,7 +29,7 @@ public class DataGenerator {
 
             logger.info("... generating 100 Car Pass entities...");
             ExampleDataGenerator<CarPass> carPassRepositoryGenerator = new ExampleDataGenerator<>(CarPass.class,
-                    LocalDateTime.of(2021, 2, 28, 0, 0, 0));
+                    LocalDateTime.now());
             carPassRepositoryGenerator.setData(CarPass::setId, DataType.ID);
             carPassRepositoryGenerator.setData(CarPass::setRegNum, DataType.ZIP_CODE);
             carPassRepositoryGenerator.setData(CarPass::setArrivalDate, DataType.DATE_NEXT_7_DAYS);

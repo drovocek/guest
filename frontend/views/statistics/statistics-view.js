@@ -18,12 +18,11 @@ class StatisticsView extends PolymerElement {
     static get template() {
         // language=HTML
         return html`
-<!--            <div id="grid-wrapper">-->
+            <div id="grid-wrapper">
                 <vaadin-grid
-                        theme="compact"
                         id="grid">
                 </vaadin-grid>
-<!--            </div id="grid-wrapper">-->
+            </div id="grid-wrapper">
         `;
     }
 
