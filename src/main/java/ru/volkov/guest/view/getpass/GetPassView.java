@@ -35,8 +35,8 @@ public class GetPassView extends PolymerTemplate<TemplateModel> {
     @Id("arrivalDate")
     private DatePicker arrivalDate;
 
-    @Id("get")
-    private Button get;
+    @Id("enter")
+    private Button enter;
     @Id("clear")
     private Button clear;
 
@@ -57,16 +57,16 @@ public class GetPassView extends PolymerTemplate<TemplateModel> {
     }
 
     @EventHandler
-    private void createCarPass() {
-        CarPass newPass = binder.getBean();
+    private void save() {
         if (binder.validate().isOk()) {
-            newPass.setRegDataTime(LocalDateTime.now());
+            CarPass newPass = binder.getBean();
             newPass.setCompanyName("OOO Roga-Kopita");
             service.update(newPass);
             Notification
                     .show("Pass created")
                     .addThemeName("success");
             clearForm();
+            navigateToMainPage();
         }
     }
 
@@ -75,5 +75,9 @@ public class GetPassView extends PolymerTemplate<TemplateModel> {
         CarPass newPass = new CarPass();
         newPass.setArrivalDate(LocalDate.now());
         binder.setBean(newPass);
+    }
+
+    private void navigateToMainPage() {
+        getUI().ifPresent(ui -> ui.navigate("statistics"));
     }
 }

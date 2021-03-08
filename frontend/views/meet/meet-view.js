@@ -17,7 +17,7 @@ class MeetView extends PolymerElement {
     static get template() {
         // language=HTML
         return html`
-            <vaadin-vertical-layout id="rr">
+            <vaadin-vertical-layout>
                 <vaadin-form-layout>
                     <vaadin-form-item>
                         <vaadin-date-picker label="Arrival date" id="arrivalDate"></vaadin-date-picker>
@@ -27,8 +27,8 @@ class MeetView extends PolymerElement {
                         <vaadin-combo-box label="Company" id="companyName"></vaadin-combo-box>
                     </vaadin-form-item>
                 </vaadin-form-layout>
+                <vaadin-vertical-layout id="cardLayout"></vaadin-vertical-layout>
             </vaadin-vertical-layout>
-            <vaadin-vertical-layout id="cardLayout"></vaadin-vertical-layout>
         `;
     }
 
@@ -39,12 +39,6 @@ class MeetView extends PolymerElement {
 
 customElements.define(MeetView.is, MeetView);
 
-// <!--                                    <iron-icon icon="vaadin:heart"></iron-icon>-->
-// <!--                                    <span class="likes">[[item.likes]]</span>-->
-// <!--                                    <iron-icon icon="vaadin:comment"></iron-icon>-->
-// <!--                                    <span class="comments">[[item.comments]]</span>-->
-// <!--                                    <iron-icon icon="vaadin:connect"></iron-icon>-->
-// <!--                                    <span class="shares">[[item.shares]]</span>-->
 
 
 

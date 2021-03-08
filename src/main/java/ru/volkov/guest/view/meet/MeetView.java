@@ -37,10 +37,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @JsModule("./views/meet/meet-view.js")
 @CssImport(value = "./views/meet/meet-view.css")
-@CssImport(
-        themeFor = "vaadin-grid",
-        value = "./views/meet/cell-color.css"
-)
 @Tag("meet-view")
 @Route(value = "meet", layout = MainAppLayout.class)
 @PageTitle("Meet")

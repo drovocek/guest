@@ -5,6 +5,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.polymertemplate.EventHandler;
 import com.vaadin.flow.component.polymertemplate.Id;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -38,23 +39,18 @@ public class RegistrationView extends PolymerTemplate<TemplateModel> {
     @Id("confirmPass")
     private PasswordField confirmPass;
 
-    @Id("save")
-    private Button save;
-    @Id("cancel")
-    private Button cancel;
+    @Id("enter")
+    private Button enter;
+    @Id("clear")
+    private Button clear;
 
     private final Binder<Company> binder = new Binder(Company.class);
+    private final CompanyService service;
 
-    public RegistrationView(CompanyService personService) {
-        getElement().getStyle().set("overflow", "auto");
+    public RegistrationView(CompanyService service) {
+        this.service = service;
 
-        Company edited = new Company();
-
-//        name.setValueChangeMode(ValueChangeMode.EAGER);
-//        email.setValueChangeMode(ValueChangeMode.EAGER);
-//        phone.setValueChangeMode(ValueChangeMode.EAGER);
-//        enterPass.setValueChangeMode(ValueChangeMode.EAGER);
-
+        binder.setBean(new Company());
         binder.forField(name)
                 .withValidator(new StringLengthValidator(
                         "Please add the company name", 1, null))
@@ -90,26 +86,26 @@ public class RegistrationView extends PolymerTemplate<TemplateModel> {
         phone.setRequiredIndicatorVisible(true);
         enterPass.setRequiredIndicatorVisible(true);
         confirmPass.setRequiredIndicatorVisible(true);
+    }
 
-        save.addClickListener(event -> {
-            if (binder.writeBeanIfValid(edited)) {
-                personService.update(binder.getBean());
-                Notification.show(
-                        String.format("Company %s registered", name.getValue()))
-                        .addThemeName("success");
-                navigateToMainPage();
-            }
-        });
-        cancel.addClickListener(event -> {
+    @EventHandler
+    private void save() {
+        if (binder.validate().isOk()) {
+            service.update(binder.getBean());
+            Notification.show(
+                    String.format("Company %s registered", name.getValue()))
+                    .addThemeName("success");
             clearForm();
-        });
+            navigateToMainPage();
+        }
+    }
+
+    @EventHandler
+    private void clearForm() {
+        binder.setBean(new Company());
     }
 
     private void navigateToMainPage() {
         getUI().ifPresent(ui -> ui.navigate("get-pass"));
-    }
-
-    private void clearForm() {
-        binder.setBean(new Company());
     }
 }

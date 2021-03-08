@@ -31,8 +31,10 @@ class GetPassView extends PolymerElement {
                 </vaadin-form-item>
                 <br>
                 <vaadin-form-item>
-                    <vaadin-button theme="primary success small" id="get" on-click="createCarPass">Get</vaadin-button>
-                    <vaadin-button theme="small" id="clear" on-click="clearForm">Clear</vaadin-button>
+                    <vaadin-horizontal-layout class="button-layout">
+                        <vaadin-button class="enter" id="enter" on-click="save">Get</vaadin-button>
+                        <vaadin-button class="clear" id="clear" on-click="clearForm">Clear</vaadin-button>
+                    </vaadin-horizontal-layout>
                 </vaadin-form-item>
             </vaadin-form-layout>
         `;

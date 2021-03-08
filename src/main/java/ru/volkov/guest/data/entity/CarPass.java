@@ -22,7 +22,7 @@ public class CarPass extends AbstractEntity implements Serializable {
 
     private LocalDate arrivalDate;
 
-    private LocalDateTime regDataTime;
+    private LocalDateTime regDataTime = LocalDateTime.now();
 
     private boolean passed;
 
