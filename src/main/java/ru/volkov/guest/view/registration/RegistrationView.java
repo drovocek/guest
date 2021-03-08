@@ -106,6 +106,6 @@ public class RegistrationView extends PolymerTemplate<TemplateModel> {
     }
 
     private void navigateToMainPage() {
-        getUI().ifPresent(ui -> ui.navigate("get-pass"));
+        getUI().ifPresent(ui -> ui.navigate("company"));
     }
 }

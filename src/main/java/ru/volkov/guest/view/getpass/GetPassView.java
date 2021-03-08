@@ -77,6 +77,6 @@ public class GetPassView extends PolymerTemplate<TemplateModel> {
     }
 
     private void navigateToMainPage() {
-        getUI().ifPresent(ui -> ui.navigate("statistics"));
+        getUI().ifPresent(ui -> ui.navigate("pass"));
     }
 }
