@@ -1,17 +1,14 @@
 package ru.volkov.guest.view.statistics;
 
-import com.github.appreciated.css.grid.GridLayoutComponent;
-import com.github.appreciated.css.grid.sizes.Length;
-import com.github.appreciated.css.grid.sizes.MinMax;
-import com.github.appreciated.css.grid.sizes.Repeat;
-import com.github.appreciated.layout.FlexibleGridLayout;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.polymertemplate.Id;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
+import com.vaadin.flow.data.provider.QuerySortOrderBuilder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.templatemodel.TemplateModel;
@@ -30,7 +27,24 @@ public class StatisticsView extends PolymerTemplate<TemplateModel> {
     @Id("grid")
     private Grid<CarPass> grid;
 
+    private final CarPassService service;
+
     public StatisticsView(CarPassService service) {
+        this.service = service;
+
+        grid.addComponentColumn((carPass) -> {
+            Icon icon;
+            if (carPass.isPassed()) {
+                icon = VaadinIcon.CHECK_SQUARE.create();
+                icon.setColor("green");
+            } else {
+                icon = VaadinIcon.SQUARE_SHADOW.create();
+                icon.setColor("orange");
+            }
+            return icon;
+        })
+                .setHeader("Passed")
+                .setSortProperty("passed");
         grid.addColumn(CarPass::getRegNum)
                 .setHeader("Registration Number")
                 .setSortProperty("regNum");
@@ -40,11 +54,14 @@ public class StatisticsView extends PolymerTemplate<TemplateModel> {
         grid.addColumn(CarPass::getArrivalDate)
                 .setHeader("Arrival Date")
                 .setSortProperty("arrivalDate");
-        grid.addColumn(CarPass::isPassed)
-                .setHeader("Passed")
-                .setSortProperty("passed");
-        grid.setDataProvider(new CrudServiceDataProvider<>(service));
 
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+        CrudServiceDataProvider<CarPass, Integer> dataProvider = new CrudServiceDataProvider<>(service);
+        dataProvider.setSortOrders(
+                new QuerySortOrderBuilder()
+                        .thenAsc("arrivalDate")
+                        .thenDesc("regDataTime")
+                        .build());
+
+        grid.setDataProvider(dataProvider);
     }
 }

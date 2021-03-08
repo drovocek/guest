@@ -29,4 +29,8 @@ public class CarPassService extends CrudService<CarPass, Integer> {
     public List<CarPass> getAllSortedByDate(LocalDate date) {
         return repository.findAllByArrivalDate(date, statAndDate);
     }
+
+    public List<CarPass> getAllSorted() {
+        return repository.findAll(statAndDate);
+    }
 }

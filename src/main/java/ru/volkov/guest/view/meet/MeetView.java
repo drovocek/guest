@@ -14,7 +14,9 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -49,30 +51,23 @@ public class MeetView extends PolymerTemplate<TemplateModel> {
     @Id("cardLayout")
     private VerticalLayout cardLayout;
 
+    private final CarPassService service;
+
     public MeetView(CarPassService service) {
+        this.service = service;
         arrivalDate.setMin(LocalDate.now());
         arrivalDate.setValue(LocalDate.now());
 
         companyName.setClearButtonVisible(true);
         companyName.setItemLabelGenerator((ItemLabelGenerator<CarPass>) CarPass::getCompanyName);
 
-        arrivalDate.addValueChangeListener(event -> fillDataByFilters(service));
-        companyName.addValueChangeListener(event -> fillDataByFilters(service));
+        arrivalDate.addValueChangeListener(event -> fillDataByFilters());
+        companyName.addValueChangeListener(event -> fillDataByFilters());
 
-//        grid.addItemDoubleClickListener(event -> {
-//            CarPass item = event.getItem();
-//            item.setPassed(!item.isPassed());
-//            service.update(item);
-//            fillDataByFilters(service);
-//            Notification
-//                    .show("Status updated")
-//                    .addThemeName("success");
-//        });
-
-        fillDataByFilters(service);
+        fillDataByFilters();
     }
 
-    private void fillDataByFilters(CarPassService service) {
+    private void fillDataByFilters() {
         List<CarPass> data = service.getAllSortedByDate(arrivalDate.getValue());
         if (!companyName.isEmpty()) {
             data = data.stream()
@@ -85,11 +80,11 @@ public class MeetView extends PolymerTemplate<TemplateModel> {
         data.stream()
                 .map(CarPassCardView::new)
                 .map(this::getSlide)
-                .map(s -> getSwiper(service, s, getSlide()))
+                .map(s -> getSwiper(s, new RippleClickableCard()))
                 .forEach(sw -> cardLayout.getElement().appendChild(sw.getElement()));
     }
 
-    private Swiper getSwiper(CarPassService service, Component... components) {
+    private Swiper getSwiper(Component... components) {
         Swiper sw = new Swiper(SwiperConfigBuilder.get()
                 .withDirection(Direction.HORIZONTAL)
                 .withAlignment(FlexComponent.Alignment.CENTER)
@@ -101,17 +96,8 @@ public class MeetView extends PolymerTemplate<TemplateModel> {
         sw.onEnabledStateChanged(true);
 
         sw.getElement().addEventListener("dblclick", event ->
-                getInByClassName(event.getSource(), "carPass").ifPresent(el -> {
-                            int id = Integer.parseInt(el.getAttribute("id"));
-                            System.out.println(id);
-                            service.get(id).ifPresent(cp -> {
-                                cp.setPassed(!cp.isPassed());
-                                service.update(cp);
-                                fillDataByFilters(service);
-                            });
-                        }
-                )
-        );
+                getInByClassName(event.getSource(), "carPass")
+                        .ifPresent(itm -> updateDate(Integer.parseInt(itm.getAttribute("id")))));
 
         sw.setHeight("55px");
         sw.setWidth("100%");
@@ -138,7 +124,7 @@ public class MeetView extends PolymerTemplate<TemplateModel> {
     private RippleClickableCard getSlide(Component... component) {
         RippleClickableCard slide = new RippleClickableCard();
         slide.setElevationOnActionEnabled(true);
-        slide.getTemplateDiv().setWidth("300px");
+        slide.getTemplateDiv().setWidth("350px");
         slide.getTemplateDiv().setHeight("50px");
         slide.add(component);
         slide.getContent().setAlignItems(FlexComponent.Alignment.STRETCH);
@@ -158,10 +144,25 @@ public class MeetView extends PolymerTemplate<TemplateModel> {
                     .setAttribute("id", carPass.getId().toString())
                     .setAttribute("class", "carPass");
             regNumCover.getChildren().findFirst()
-                    .ifPresent(label -> ((Label) label).setText(carPass.getRegNum()));
+                    .ifPresent(label -> {
+                        ((Label) label).setText(carPass.getRegNum());
+                        label.getElement().getStyle().set("font-weight", "bold");
+                    });
             companyNameCover.getChildren().findFirst()
                     .ifPresent(label -> ((Label) label).setText(carPass.getCompanyName()));
-            passedCover.add(carPass.isPassed() ? VaadinIcon.CHECK_SQUARE.create() : VaadinIcon.SQUARE_SHADOW.create());
+
+            Icon icon;
+            if (carPass.isPassed()) {
+                icon = VaadinIcon.CHECK_SQUARE.create();
+                icon.setColor("green");
+            } else {
+                icon = VaadinIcon.SQUARE_SHADOW.create();
+                icon.setColor("orange");
+            }
+            passedCover.getElement().addEventListener("click", event -> updateDate(carPass.getId()));
+            passedCover.add(icon);
+
+            passedCover.getElement().getStyle().set("margin-left", "30px");
 
             HorizontalLayout layout = new HorizontalLayout(passedCover, regNumCover, companyNameCover);
             layout.setAlignItems(FlexComponent.Alignment.STRETCH);
@@ -171,5 +172,16 @@ public class MeetView extends PolymerTemplate<TemplateModel> {
             rootCover.add(layout);
             getContent().add(rootCover);
         }
+    }
+
+    private void updateDate(int id) {
+        service.get(id).ifPresent(cp -> {
+            cp.setPassed(!cp.isPassed());
+            service.update(cp);
+            fillDataByFilters();
+            Notification
+                    .show("Status updated")
+                    .addThemeName("success");
+        });
     }
 }
