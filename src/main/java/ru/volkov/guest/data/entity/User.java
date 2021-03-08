@@ -6,19 +6,27 @@ import ru.volkov.guest.data.AbstractEntity;
 import javax.persistence.Entity;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-public class Company extends AbstractEntity implements Serializable {
+public class User extends AbstractEntity implements Serializable {
 
+//    private Role role = Role.USER;
+
+    //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    private Company company;
+    private String role;
+    private String company;
     private String name;
     private String email;
     private String phone;
     private String password;
     private LocalDate regDate = LocalDate.now();
+    private LocalDateTime lastActivity;
     private int passCount;
 
 //    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)

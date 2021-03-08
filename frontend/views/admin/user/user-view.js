@@ -9,7 +9,7 @@ import '@vaadin/vaadin-date-picker';
 import '@vaadin/vaadin-button';
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout';
 
-class StatisticsView extends PolymerElement {
+class UserView extends PolymerElement {
     _attachDom(dom) {
         // Do not use a shadow root
         this.appendChild(dom);
@@ -23,8 +23,8 @@ class StatisticsView extends PolymerElement {
     }
 
     static get is() {
-        return 'statistics-view';
+        return 'user-view';
     }
 }
 
-customElements.define(StatisticsView.is, StatisticsView);
+customElements.define(UserView.is, UserView);

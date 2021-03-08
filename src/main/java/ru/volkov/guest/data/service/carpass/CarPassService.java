@@ -1,4 +1,4 @@
-package ru.volkov.guest.data.service;
+package ru.volkov.guest.data.service.carpass;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

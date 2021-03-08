@@ -17,10 +17,9 @@ import com.vaadin.flow.templatemodel.TemplateModel;
 import lombok.extern.slf4j.Slf4j;
 import ru.volkov.guest.MainAppLayout;
 import ru.volkov.guest.data.entity.CarPass;
-import ru.volkov.guest.data.service.CarPassService;
+import ru.volkov.guest.data.service.carpass.CarPassService;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Slf4j
 @JsModule("./views/getpass/get-pass-view.js")

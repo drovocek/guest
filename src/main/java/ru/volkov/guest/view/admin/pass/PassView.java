@@ -1,4 +1,4 @@
-package ru.volkov.guest.view.statistics;
+package ru.volkov.guest.view.admin.pass;
 
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -15,21 +15,21 @@ import com.vaadin.flow.templatemodel.TemplateModel;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import ru.volkov.guest.MainAppLayout;
 import ru.volkov.guest.data.entity.CarPass;
-import ru.volkov.guest.data.service.CarPassService;
+import ru.volkov.guest.data.service.carpass.CarPassService;
 
-@JsModule("./views/statistics/statistics-view.js")
-@CssImport("./views/statistics/statistics-view.css")
-@Tag("statistics-view")
-@PageTitle("Statistics")
-@Route(value = "statistics", layout = MainAppLayout.class)
-public class StatisticsView extends PolymerTemplate<TemplateModel> {
+@JsModule("./views/admin/pass/pass-view.js")
+@CssImport("./views/admin/pass/pass-view.css")
+@Tag("pass-view")
+@PageTitle("Pass")
+@Route(value = "pass", layout = MainAppLayout.class)
+public class PassView extends PolymerTemplate<TemplateModel> {
 
     @Id("grid")
     private Grid<CarPass> grid;
 
     private final CarPassService service;
 
-    public StatisticsView(CarPassService service) {
+    public PassView(CarPassService service) {
         this.service = service;
 
         grid.addComponentColumn((carPass) -> {

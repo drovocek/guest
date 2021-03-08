@@ -29,7 +29,7 @@ import com.vaadin.flow.templatemodel.TemplateModel;
 import lombok.extern.slf4j.Slf4j;
 import ru.volkov.guest.MainAppLayout;
 import ru.volkov.guest.data.entity.CarPass;
-import ru.volkov.guest.data.service.CarPassService;
+import ru.volkov.guest.data.service.carpass.CarPassService;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -19,7 +19,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.templatemodel.TemplateModel;
 import ru.volkov.guest.MainAppLayout;
 import ru.volkov.guest.data.entity.Company;
-import ru.volkov.guest.data.service.CompanyService;
+import ru.volkov.guest.data.service.company.CompanyService;
 
 @JsModule("./views/registration/registration-view.js")
 @CssImport("./views/registration/registration-view.css")

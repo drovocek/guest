@@ -1,4 +1,4 @@
-package ru.volkov.guest.data.service;
+package ru.volkov.guest.data.service.company;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.volkov.guest.data.entity.Company;
