@@ -20,11 +20,13 @@ public class User extends AbstractEntity implements Serializable {
     //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 //    private Company company;
     private String role;
-    private String company;
     private String name;
     private String email;
     private String phone;
     private String password;
+
+    private String company;
+
     private LocalDate regDate = LocalDate.now();
     private LocalDateTime lastActivity;
     private int passCount;
