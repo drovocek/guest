@@ -26,7 +26,6 @@ import java.time.LocalDate;
 @CssImport("./views/getpass/get-pass-view.css")
 @Tag("get-pass-view")
 @PageTitle("Get pass")
-@Route(value = "get-pass", layout = MainAppLayout.class)
 public class GetPassView extends PolymerTemplate<TemplateModel> {
 
     @Id("regNum")

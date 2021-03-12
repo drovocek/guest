@@ -9,6 +9,7 @@ import org.vaadin.artur.exampledata.DataType;
 import org.vaadin.artur.exampledata.ExampleDataGenerator;
 import ru.volkov.guest.data.entity.CarPass;
 import ru.volkov.guest.data.entity.Company;
+import ru.volkov.guest.data.entity.Role;
 import ru.volkov.guest.data.entity.User;
 import ru.volkov.guest.data.service.carpass.CarPassRepository;
 import ru.volkov.guest.data.service.company.CompanyRepository;
@@ -44,17 +45,10 @@ public class DataGenerator {
             carPassGenerator.setData(CarPass::setCompanyName, DataType.COMPANY_NAME);
             carPassRepository.saveAll(carPassGenerator.create(50, seed));
 
-            ExampleDataGenerator<User> userGenerator = new ExampleDataGenerator<>(User.class, LocalDateTime.now());
-            userGenerator.setData(User::setRole, DataType.WORD);
-            userGenerator.setData(User::setCompany, DataType.COMPANY_NAME);
-            userGenerator.setData(User::setName, DataType.FIRST_NAME);
-            userGenerator.setData(User::setEmail, DataType.EMAIL);
-            userGenerator.setData(User::setPhone, DataType.PHONE_NUMBER);
-            userGenerator.setData(User::setPassword, DataType.TWO_WORDS);
-            userGenerator.setData(User::setRegDate, DataType.DATE_OF_BIRTH);
-//            userGenerator.setData(User::setLastActivity, DataType.);
-            userGenerator.setData(User::setPassCount, DataType.NUMBER_UP_TO_100);
-            userRepository.saveAll(userGenerator.create(50, 30));
+            userRepository.save(new User("owner", "owner@email.ru", "+7(777)777-77-77", Role.OWNER, "owner"));
+            userRepository.save(new User("guard", "guard@email.ru", "+6(666)666-66-66", Role.GUARD, "guard"));
+            userRepository.save(new User("company", "company@email.ru", "+5(555)555-55-55", Role.COMPANY, "company"));
+            userRepository.save(new User("user", "user@email.ru", "+4(444)444-44-44", Role.USER, "user"));
 
             ExampleDataGenerator<Company> companyGenerator = new ExampleDataGenerator<>(Company.class, LocalDateTime.now());
             companyGenerator.setData(Company::setName, DataType.COMPANY_NAME);

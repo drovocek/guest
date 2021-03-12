@@ -1,6 +1,7 @@
 get-pass-view {
-  width: 100%;
-  height: 100%;
+  display: grid;
+  padding-top: 15%;
+  padding-left: 10%;
 }
 
 get-pass-view .button-layout {
@@ -25,11 +26,4 @@ get-pass-view vaadin-button.clear {
   height: var(--lumo-size-s);
   padding: var(--lumo-space-xs);
   box-shadow: var(--lumo-box-shadow-m);
-}
-
-get-pass-view vaadin-form-layout{
-  position: absolute;
-  top: 50%;
-  left: 55%;
-  transform: translate(-50%, -50%);
 }

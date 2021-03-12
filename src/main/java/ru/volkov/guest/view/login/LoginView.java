@@ -8,16 +8,18 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-import ru.volkov.guest.MainAppLayout;
 
 @Tag("login-view")
 @PageTitle("Login")
-@RouteAlias(value = "", layout = MainAppLayout.class)
-@Route(value = "login", layout = MainAppLayout.class)
+@RouteAlias(value = "")
+@Route(value = "login")
 public class LoginView extends VerticalLayout {
 
+    private final AuthService authService;
+
     //    https://vaadin.com/components/vaadin-login/java-examples
-    public LoginView() {
+    public LoginView(AuthService authService) {
+        this.authService = authService;
         LoginOverlay component = new LoginOverlay();
         component.addLoginListener(e -> component.close());
         component.setOpened(true);
@@ -47,6 +49,6 @@ public class LoginView extends VerticalLayout {
     }
 
     private boolean authenticate(AbstractLogin.LoginEvent e) {
-        return true;
+        return authService.authenticate(e.getUsername(), e.getPassword());
     }
 }
