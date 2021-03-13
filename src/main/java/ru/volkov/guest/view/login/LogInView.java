@@ -10,28 +10,26 @@ import lombok.extern.slf4j.Slf4j;
 import ru.volkov.guest.data.service.AuthService;
 import ru.volkov.guest.util.exception.AuthException;
 import ru.volkov.guest.util.exception.NotFoundException;
-import ru.volkov.guest.view.getpass.GetPassView;
-import ru.volkov.guest.view.settings.SettingsView;
 
 @Slf4j
 @Tag("login-view")
 @PageTitle("LogIn")
-//@RouteAlias(value = "")
+@RouteAlias(value = "")
 @Route(value = "login")
-public class LogInView extends VerticalLayout {//implements BeforeEnterObserver {
+public class LogInView extends VerticalLayout implements BeforeEnterObserver {
 
     private final AuthService authService;
     private final LoginOverlay login;
-//
-//    @Override
-//    public void beforeEnter(BeforeEnterEvent event) {
-//        log.info("\nbeforeEnter1");
-//        if (authService.getAuthUser().isPresent()) {
-//            log.info("\nbeforeEnter2");
-//            login.close();
-//            navigateToMainPage();
-//        }
-//    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        log.info("\nbeforeEnter1");
+        if (authService.getAuthUser().isPresent()) {
+            login.close();
+            authService.getAuthUserRoutes().ifPresent(routes ->
+                    event.forwardTo(routes.get(0).getPath()));
+        }
+    }
 
     //    https://vaadin.com/components/vaadin-login/java-examples
     public LogInView(AuthService authService) {
@@ -62,9 +60,8 @@ public class LogInView extends VerticalLayout {//implements BeforeEnterObserver 
     }
 
     private void navigateToMainPage() {
-        getUI().ifPresent(ui -> ui.navigate(SettingsView.class));
-//        authService.getAuthUserRoutes().ifPresent(routes ->
-//                getUI().ifPresent(ui -> ui.navigate(routes.get(0).getRoute())));
+        authService.getAuthUserRoutes().ifPresent(routes ->
+                getUI().ifPresent(ui -> ui.navigate(routes.get(0).getView())));
     }
 
     private void authenticate(AbstractLogin.LoginEvent e) {

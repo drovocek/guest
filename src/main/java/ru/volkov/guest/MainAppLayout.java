@@ -1,71 +1,107 @@
 package ru.volkov.guest;
 
-import com.github.appreciated.app.layout.addons.notification.DefaultNotificationHolder;
-import com.github.appreciated.app.layout.addons.notification.component.NotificationButton;
-import com.github.appreciated.app.layout.component.appbar.AppBarBuilder;
-import com.github.appreciated.app.layout.component.applayout.LeftLayouts;
-import com.github.appreciated.app.layout.component.builder.AppLayoutBuilder;
-import com.github.appreciated.app.layout.component.menu.left.builder.LeftAppMenuBuilder;
-import com.github.appreciated.app.layout.component.menu.left.items.LeftHeaderItem;
-import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigationItem;
-import com.github.appreciated.app.layout.component.router.AppLayoutRouterLayout;
-import com.github.appreciated.app.layout.entity.DefaultBadgeHolder;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.page.Push;
-import com.vaadin.flow.component.page.Viewport;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.tabs.TabsVariant;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
-import com.vaadin.flow.spring.annotation.UIScope;
-import org.springframework.stereotype.Component;
 import ru.volkov.guest.data.service.AuthService;
 
-import static com.github.appreciated.app.layout.entity.Section.HEADER;
+import java.util.Optional;
 
-@Push
-@Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
-@PWA(name = "Project Base for Vaadin Flow with Spring", shortName = "Project Base")
-@Component
-@UIScope // optional but useful; allows access to this instance from views, see View1.
-public class MainAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftResponsive> {
-    private DefaultNotificationHolder notifications = new DefaultNotificationHolder();
-    private DefaultBadgeHolder badge = new DefaultBadgeHolder(5);
+/**
+ * The main view is a top-level placeholder for other views.
+ */
+@CssImport("./views/main/main-view.css")
+@PWA(name = "Guest", shortName = "Guest", enableInstallPrompt = false)
+@JsModule("./styles/shared-styles.js")
+public class MainAppLayout extends AppLayout {
+
+    private final Tabs menu;
+    private H1 viewTitle;
+
+    private final AuthService service;
 
     public MainAppLayout(AuthService service) {
-        notifications.addClickListener(notification -> {/* ... */});
-//
-//        LeftNavigationItem menuEntry = new LeftNavigationItem("Menu", VaadinIcon.MENU.create(), SomeView.class);
-//        badge.bind(menuEntry.getBadge());
-
-        init(AppLayoutBuilder.get(LeftLayouts.LeftResponsive.class)
-                .withTitle("Guest")
-                .withAppBar(AppBarBuilder.get().add(new NotificationButton<>(VaadinIcon.BELL, notifications)).build())
-                .withAppMenu(
-                        LeftAppMenuBuilder.get()
-                                .addToSection(HEADER, new LeftHeaderItem("Prototype", "Version 1.0.0", "/frontend/images/logo.png"))
-                                .add(service.getAuthUserRoutes().map(AuthService.Routes::asNavItems).orElseGet(() -> new LeftNavigationItem[0])).build())
-
-//                                new LeftNavigationItem("Registration", VaadinIcon.ENTER.create(), RegistrationView.class)
-//                                ,
-//                                new LeftNavigationItem("Login", VaadinIcon.USER.create(), LogInView.class),
-//                                new LeftNavigationItem("GetPass", VaadinIcon.GOLF.create(), GetPassView.class),
-//                                LeftSubMenuBuilder.get("Admin", VaadinIcon.TOOLS.create())
-//                                        .add(new LeftNavigationItem("Pass", VaadinIcon.USER_CARD.create(), PassesView.class),
-//                                                new LeftNavigationItem("User", VaadinIcon.USERS.create(), UsersView.class),
-//                                                new LeftNavigationItem("Company", VaadinIcon.PIGGY_BANK_COIN.create(), CompaniesView.class))
-//                                        .build(),
-//                                new LeftNavigationItem("Meet", VaadinIcon.CHECK_SQUARE_O.create(), MeetView.class),
-//                                new LeftNavigationItem("Settings", VaadinIcon.COG.create(), SettingsView.class)
-
-
-                .build());
-
-
+        this.service = service;
+        setPrimarySection(Section.DRAWER);
+        addToNavbar(true, createHeaderContent());
+        menu = createMenu();
+        addToDrawer(createDrawerContent(menu));
     }
 
-    public DefaultNotificationHolder getNotifications() {
-        return notifications;
+    private Component createHeaderContent() {
+        HorizontalLayout layout = new HorizontalLayout();
+        layout.setId("header");
+        layout.getThemeList().set("dark", true);
+        layout.setWidthFull();
+        layout.setSpacing(false);
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+        layout.add(new DrawerToggle());
+        viewTitle = new H1();
+        layout.add(viewTitle);
+        layout.add(new Avatar());
+        return layout;
     }
 
-    public DefaultBadgeHolder getBadge() {
-        return badge;
+    private Component createDrawerContent(Tabs menu) {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
+        layout.setPadding(false);
+        layout.setSpacing(false);
+        layout.getThemeList().set("spacing-s", true);
+        layout.setAlignItems(FlexComponent.Alignment.STRETCH);
+        HorizontalLayout logoLayout = new HorizontalLayout();
+        logoLayout.setId("logo");
+        logoLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        logoLayout.add(new Image("images/logo.png", "Guest logo"));
+        logoLayout.add(new H1("Guest"));
+        layout.add(logoLayout, menu);
+        return layout;
+    }
+
+    private Tabs createMenu() {
+        final Tabs tabs = new Tabs();
+        tabs.setOrientation(Tabs.Orientation.VERTICAL);
+        tabs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
+        tabs.setId("tabs");
+        tabs.add(createMenuItems());
+        return tabs;
+    }
+
+    private Component[] createMenuItems() {
+        return service.getAuthUserRoutes()
+                .map(AuthService.Routes::asTabs)
+                .orElseGet(() -> new Tab[0]);
+    }
+
+    @Override
+    protected void afterNavigation() {
+        super.afterNavigation();
+        getTabForComponent(getContent()).ifPresent(menu::setSelectedTab);
+        viewTitle.setText(getCurrentPageTitle());
+    }
+
+    private Optional<Tab> getTabForComponent(Component component) {
+        return menu.getChildren().filter(tab -> ComponentUtil.getData(tab, Class.class).equals(component.getClass()))
+                .findFirst().map(Tab.class::cast);
+    }
+
+    private String getCurrentPageTitle() {
+        PageTitle title = getContent().getClass().getAnnotation(PageTitle.class);
+        return title == null ? "" : title.value();
     }
 }

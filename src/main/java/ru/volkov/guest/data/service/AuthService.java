@@ -1,9 +1,11 @@
 package ru.volkov.guest.data.service;
 
-import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigationItem;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.router.RouteConfiguration;
+import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinSession;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -51,16 +53,17 @@ public class AuthService {
     }
 
     private void createRoutes(Role role) {
-        getAuthRoutes(role).forEach(rts ->
-                RouteConfiguration.forSessionScope().setRoute(rts.getRoute(), rts.getView(), MainAppLayout.class));
+        getAuthRoutes(role).forEach(route ->
+                RouteConfiguration.forSessionScope()
+                        .setRoute(route.path, route.view, MainAppLayout.class));
     }
 
     public List<Routes> getAuthRoutes(Role role) {
         return switch (role) {
-            case OWNER -> List.of(GET_PASS, MEET, COMPANIES, USERS, PASSES, SETTINGS);
-            case COMPANY -> List.of(GET_PASS, USERS, PASSES, SETTINGS);
-            case USER -> List.of(GET_PASS, PASSES, SETTINGS);
-            case GUARD -> List.of(MEET, PASSES, SETTINGS);
+            case OWNER -> List.of(GET_PASS, MEET, COMPANIES, USERS, PASSES, SETTINGS, LOG_OUT);
+            case COMPANY -> List.of(GET_PASS, USERS, PASSES, SETTINGS, LOG_OUT);
+            case USER -> List.of(GET_PASS, PASSES, SETTINGS, LOG_OUT);
+            case GUARD -> List.of(MEET, PASSES, SETTINGS, LOG_OUT);
         };
     }
 
@@ -83,24 +86,27 @@ public class AuthService {
         LOG_IN("login", "LogIn", LogInView.class, USER.create()),
         SETTINGS("settings", "Settings", SettingsView.class, COG.create());
 
-        private final String route;
+        private final String path;
         private final String name;
         private final Class<? extends Component> view;
         private final Component icon;
 
-        Routes(String route, String name, Class<? extends Component> view, Component icon) {
-            this.route = route;
+        Routes(String path, String name, Class<? extends Component> view, Component icon) {
+            this.path = path;
             this.name = name;
             this.view = view;
             this.icon = icon;
         }
 
-        public static LeftNavigationItem asNavItem(Routes route) {
-            return new LeftNavigationItem(route.getName(), route.getIcon(), route.getView());
+        private static Tab asTab(Routes route) {
+            final Tab tab = new Tab();
+            tab.add(new RouterLink(route.path, route.view));
+            ComponentUtil.setData(tab, Class.class, route.view);
+            return tab;
         }
 
-        public static LeftNavigationItem[] asNavItems(List<Routes> routes) {
-            return routes.stream().map(Routes::asNavItem).toArray(LeftNavigationItem[]::new);
+        public static Tab[] asTabs(List<Routes> routes) {
+            return routes.stream().map(Routes::asTab).toArray(Tab[]::new);
         }
     }
 }
