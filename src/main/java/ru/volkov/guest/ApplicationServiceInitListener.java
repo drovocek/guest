@@ -6,6 +6,7 @@ import com.vaadin.flow.server.VaadinServiceInitListener;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import ru.volkov.guest.util.exception.AuthException;
 import ru.volkov.guest.util.exception.NotFoundException;
+import ru.volkov.guest.util.exception.NotYetImplementedException;
 
 import static com.vaadin.flow.component.notification.Notification.Position.BOTTOM_START;
 
@@ -17,7 +18,10 @@ public class ApplicationServiceInitListener implements VaadinServiceInitListener
         event.getSource().addSessionInitListener(e -> {
             e.getSession().setErrorHandler(errorEvent -> {
                 Throwable t = errorEvent.getThrowable();
-                if (t instanceof NotFoundException || t instanceof AuthException) {
+                if (t instanceof NotFoundException ||
+                        t instanceof AuthException ||
+                        t instanceof NotYetImplementedException
+                ) {
                     Notification.show(t.getMessage(), 2000, BOTTOM_START).addThemeName("error");
                 } else {
                     throw new RuntimeException(t);

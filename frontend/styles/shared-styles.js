@@ -29,7 +29,6 @@ $_documentContainer.innerHTML = `
       --lumo-line-height-m: 1.8;
       --lumo-line-height-s: 1.5;
       --lumo-line-height-xs: 1.3;
-
     }
 
 </style>

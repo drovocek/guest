@@ -67,6 +67,7 @@ public class AuthService {
         };
     }
 
+
     public Optional<User> getAuthUser() {
         return Optional.ofNullable(VaadinSession.getCurrent().getAttribute(User.class));
     }
@@ -77,21 +78,21 @@ public class AuthService {
 
     @Getter
     public enum Routes {
-        GET_PASS("get-pass", "Get Pass", GetPassView.class, GOLF.create()),
-        MEET("meet", "Meet", MeetView.class, CHECK_SQUARE_O.create()),
-        COMPANIES("companies", "Companies", CompaniesView.class, PIGGY_BANK_COIN.create()),
-        USERS("users", "Users", UsersView.class, VaadinIcon.USERS.create()),
-        PASSES("passes", "Passes", PassesView.class, USER_CARD.create()),
-        LOG_OUT("logout", "LogOut", LogOutView.class, ARROW_LEFT.create()),
-        LOG_IN("login", "LogIn", LogInView.class, USER.create()),
-        SETTINGS("settings", "Settings", SettingsView.class, COG.create());
+        GET_PASS("get-pass", "Get Pass", GetPassView.class, GOLF),
+        MEET("meet", "Meet", MeetView.class, CHECK_SQUARE_O),
+        COMPANIES("companies", "Companies", CompaniesView.class, PIGGY_BANK_COIN),
+        USERS("users", "Users", UsersView.class, VaadinIcon.USERS),
+        PASSES("passes", "Passes", PassesView.class, USER_CARD),
+        LOG_OUT("logout", "LogOut", LogOutView.class, ARROW_LEFT),
+        LOG_IN("login", "LogIn", LogInView.class, USER),
+        SETTINGS("settings", "Settings", SettingsView.class, COG);
 
         private final String path;
         private final String name;
         private final Class<? extends Component> view;
-        private final Component icon;
+        private final VaadinIcon icon;
 
-        Routes(String path, String name, Class<? extends Component> view, Component icon) {
+        Routes(String path, String name, Class<? extends Component> view, VaadinIcon icon) {
             this.path = path;
             this.name = name;
             this.view = view;
@@ -100,6 +101,7 @@ public class AuthService {
 
         private static Tab asTab(Routes route) {
             final Tab tab = new Tab();
+            tab.add(route.icon.create());
             tab.add(new RouterLink(route.path, route.view));
             ComponentUtil.setData(tab, Class.class, route.view);
             return tab;

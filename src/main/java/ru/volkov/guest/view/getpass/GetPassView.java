@@ -12,10 +12,8 @@ import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.templatemodel.TemplateModel;
 import lombok.extern.slf4j.Slf4j;
-import ru.volkov.guest.MainAppLayout;
 import ru.volkov.guest.data.entity.CarPass;
 import ru.volkov.guest.data.service.carpass.CarPassService;
 
@@ -43,7 +41,6 @@ public class GetPassView extends PolymerTemplate<TemplateModel> {
 
     public GetPassView(CarPassService service) {
         this.service = service;
-        regNum.setPlaceholder("c065mk78");
         binder.bindInstanceFields(this);
         binder.forField(regNum)
                 .withValidator(name -> name.length() > 8 && name.length() < 11,
@@ -76,6 +73,6 @@ public class GetPassView extends PolymerTemplate<TemplateModel> {
     }
 
     private void navigateToMainPage() {
-        getUI().ifPresent(ui -> ui.navigate("pass"));
+        getUI().ifPresent(ui -> ui.navigate("passes"));
     }
 }

@@ -3,6 +3,9 @@ meet-view {
   height: 100%;
 }
 
-
+meet-view vaadin-form-layout{
+  margin-left: 10%;
+  margin-right: 10%;
+}
 
 

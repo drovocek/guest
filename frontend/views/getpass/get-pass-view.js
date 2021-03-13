@@ -23,20 +23,28 @@ class GetPassView extends PolymerElement {
                 </vaadin-form-item>
                 <br>
                 <vaadin-form-item>
-                    <vaadin-text-field label="Registration number" id="regNum"></vaadin-text-field>
+                    <vaadin-text-field
+                            id="regNum"
+                            label="Registration number"
+                            placeholder="c065mk78"
+                    ></vaadin-text-field>
                 </vaadin-form-item>
                 <br>
                 <vaadin-form-item>
-                    <vaadin-date-picker label="Arrival date" id="arrivalDate"></vaadin-date-picker>
+                    <vaadin-date-picker
+                            id="arrivalDate"
+                            label="Arrival date"
+                    ></vaadin-date-picker>
                 </vaadin-form-item>
                 <br>
                 <vaadin-form-item>
-                    <vaadin-horizontal-layout class="button-layout">
+                    <vaadin-horizontal-layout>
                         <vaadin-button class="enter" id="enter" on-click="save">Get</vaadin-button>
                         <vaadin-button class="clear" id="clear" on-click="clearForm">Clear</vaadin-button>
                     </vaadin-horizontal-layout>
                 </vaadin-form-item>
             </vaadin-form-layout>
+
         `;
     }
 

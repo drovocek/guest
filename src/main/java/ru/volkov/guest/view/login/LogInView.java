@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.volkov.guest.data.service.AuthService;
 import ru.volkov.guest.util.exception.AuthException;
 import ru.volkov.guest.util.exception.NotFoundException;
+import ru.volkov.guest.util.exception.NotYetImplementedException;
 
 @Slf4j
 @Tag("login-view")
@@ -38,7 +39,12 @@ public class LogInView extends VerticalLayout implements BeforeEnterObserver {
 //        login.addLoginListener(e -> login.close());
         login.setOpened(true);
         login.setTitle("Guest");
-        login.setDescription("App for get pass");
+        login.setDescription("App for get pass. For test use " +
+                " username/password: \n" +
+                "- owner/owner, \n" +
+                "- company/company, \n" +
+                "- user/user, \n" +
+                "- guard/guard;");
 
         login.addLoginListener(e -> {
             try {
@@ -49,6 +55,10 @@ public class LogInView extends VerticalLayout implements BeforeEnterObserver {
                 login.setError(true);
                 throw ex;
             }
+        });
+
+        login.addForgotPasswordListener(e -> {
+            throw new NotYetImplementedException();
         });
 
         //component.setEnabled(true)
