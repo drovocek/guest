@@ -2,11 +2,16 @@
 
 :link: [**DEMO**](https://getpass.herokuapp.com/)
 
+username/password: 
+- owner/owner, 
+- company/company, 
+- user/user, 
+- guard/guard;
 ## Completion date 
 :heavy_check_mark: open
 
 ## Technology stack
-- Java 8
+- Java 15
 - Vaadin 14, Spring Boot
 - Lombok
 - Heroku

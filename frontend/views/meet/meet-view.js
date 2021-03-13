@@ -18,14 +18,9 @@ class MeetView extends PolymerElement {
         // language=HTML
         return html`
             <vaadin-vertical-layout>
-                <vaadin-form-layout>
-                    <vaadin-form-item>
-                        <vaadin-date-picker label="Arrival date" id="arrivalDate"></vaadin-date-picker>
-                    </vaadin-form-item>
-                    <br>
-                    <vaadin-form-item>
-                        <vaadin-combo-box label="Company" id="companyName"></vaadin-combo-box>
-                    </vaadin-form-item>
+                <vaadin-form-layout >
+                    <vaadin-date-picker  label="Arrival date" id="arrivalDate"></vaadin-date-picker>
+                    <vaadin-combo-box label="Company" id="companyName"></vaadin-combo-box>
                 </vaadin-form-layout>
                 <vaadin-vertical-layout id="cardLayout"></vaadin-vertical-layout>
             </vaadin-vertical-layout>
