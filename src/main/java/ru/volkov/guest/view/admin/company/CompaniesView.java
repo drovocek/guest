@@ -8,10 +8,8 @@ import com.vaadin.flow.component.polymertemplate.Id;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.data.provider.QuerySortOrderBuilder;
 import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.templatemodel.TemplateModel;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
-import ru.volkov.guest.MainAppLayout;
 import ru.volkov.guest.data.entity.Company;
 import ru.volkov.guest.data.service.company.CompanyService;
 
@@ -19,15 +17,14 @@ import ru.volkov.guest.data.service.company.CompanyService;
 @CssImport("./views/admin/company/company-view.css")
 @Tag("company-view")
 @PageTitle("Company")
-@Route(value = "company", layout = MainAppLayout.class)
-public class CompanyView extends PolymerTemplate<TemplateModel> {
+public class CompaniesView extends PolymerTemplate<TemplateModel> {
 
     @Id("grid")
     private Grid<Company> grid;
 
     private final CompanyService service;
 
-    public CompanyView(CompanyService service) {
+    public CompaniesView(CompanyService service) {
         this.service = service;
 
         grid.addColumn(Company::getName)

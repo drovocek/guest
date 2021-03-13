@@ -10,10 +10,8 @@ import com.vaadin.flow.component.polymertemplate.Id;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.data.provider.QuerySortOrderBuilder;
 import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.templatemodel.TemplateModel;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
-import ru.volkov.guest.MainAppLayout;
 import ru.volkov.guest.data.entity.CarPass;
 import ru.volkov.guest.data.service.carpass.CarPassService;
 
@@ -21,15 +19,14 @@ import ru.volkov.guest.data.service.carpass.CarPassService;
 @CssImport("./views/admin/pass/pass-view.css")
 @Tag("pass-view")
 @PageTitle("Pass")
-@Route(value = "pass", layout = MainAppLayout.class)
-public class PassView extends PolymerTemplate<TemplateModel> {
+public class PassesView extends PolymerTemplate<TemplateModel> {
 
     @Id("grid")
     private Grid<CarPass> grid;
 
     private final CarPassService service;
 
-    public PassView(CarPassService service) {
+    public PassesView(CarPassService service) {
         this.service = service;
 
         grid.addComponentColumn((carPass) -> {

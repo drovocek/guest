@@ -8,7 +8,6 @@ import ru.volkov.guest.MainAppLayout;
 
 @Tag("settings-view")
 @PageTitle("Settings")
-@Route(value = "settings", layout = MainAppLayout.class)
 public class SettingsView extends Component {
 
 }

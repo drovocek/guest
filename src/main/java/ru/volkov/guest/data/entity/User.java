@@ -34,7 +34,7 @@ public class User extends AbstractEntity implements Serializable {
 
     private LocalDate regDate = LocalDate.now();
     private LocalDateTime lastActivity = LocalDateTime.now();
-//    private int passCount;
+    private int passCount;
 
 //    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
 //    private List<CarPass> passes = new ArrayList<>();

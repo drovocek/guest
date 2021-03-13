@@ -18,7 +18,7 @@ public class ApplicationServiceInitListener implements VaadinServiceInitListener
             e.getSession().setErrorHandler(errorEvent -> {
                 Throwable t = errorEvent.getThrowable();
                 if (t instanceof NotFoundException || t instanceof AuthException) {
-                    Notification.show(t.getMessage(), 2000, BOTTOM_START);
+                    Notification.show(t.getMessage(), 2000, BOTTOM_START).addThemeName("error");
                 } else {
                     throw new RuntimeException(t);
                 }

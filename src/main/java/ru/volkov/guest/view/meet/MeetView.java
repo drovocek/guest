@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 @JsModule("./views/meet/meet-view.js")
 @CssImport(value = "./views/meet/meet-view.css")
 @Tag("meet-view")
-@Route(value = "meet", layout = MainAppLayout.class)
 @PageTitle("Meet")
 public class MeetView extends PolymerTemplate<TemplateModel> {
 

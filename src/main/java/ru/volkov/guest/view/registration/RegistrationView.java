@@ -25,7 +25,6 @@ import ru.volkov.guest.data.service.company.CompanyService;
 @CssImport("./views/registration/registration-view.css")
 @Tag("registration-view")
 @PageTitle("Registration")
-@Route(value = "registration", layout = MainAppLayout.class)
 public class RegistrationView extends PolymerTemplate<TemplateModel> {
 
     @Id("name")

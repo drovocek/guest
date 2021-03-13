@@ -13,13 +13,9 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
-import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.templatemodel.TemplateModel;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
-import ru.volkov.guest.MainAppLayout;
-import ru.volkov.guest.data.entity.CarPass;
 import ru.volkov.guest.data.entity.User;
 import ru.volkov.guest.data.service.user.UserService;
 
@@ -29,8 +25,7 @@ import java.util.Optional;
 @CssImport("./views/admin/user/user-view.css")
 @Tag("user-view")
 @PageTitle("User")
-@Route(value = "user", layout = MainAppLayout.class)
-public class UserView extends PolymerTemplate<TemplateModel> {
+public class UsersView extends PolymerTemplate<TemplateModel> {
 
     @Id("name")
     private TextField name;
@@ -48,7 +43,7 @@ public class UserView extends PolymerTemplate<TemplateModel> {
     private BeanValidationBinder<User> binder;
     private User user;
 
-    public UserView(UserService service) {
+    public UsersView(UserService service) {
 
         grid.addColumn(User::getRole)
                 .setHeader("Role")
