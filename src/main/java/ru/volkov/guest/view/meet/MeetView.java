@@ -25,6 +25,7 @@ import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.templatemodel.TemplateModel;
 import lombok.extern.slf4j.Slf4j;
 import ru.volkov.guest.MainAppLayout;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 @CssImport(value = "./views/meet/meet-view.css")
 @Tag("meet-view")
 @PageTitle("Meet")
+@UIScope
 public class MeetView extends PolymerTemplate<TemplateModel> {
 
     @Id("companyName")

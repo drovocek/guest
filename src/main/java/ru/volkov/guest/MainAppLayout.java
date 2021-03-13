@@ -41,7 +41,7 @@ public class MainAppLayout extends AppLayoutRouterLayout<LeftLayouts.LeftRespons
                 .withAppMenu(
                         LeftAppMenuBuilder.get()
                                 .addToSection(HEADER, new LeftHeaderItem("Prototype", "Version 1.0.0", "/frontend/images/logo.png"))
-                                .add(service.getAuthUserRoutes().map(AuthService.Routes::asNavItems).orElseGet(() -> new LeftNavigationItem[0])).build())
+                                .add(service.getAuthUserRoutes().map(AuthService::asNavItems).orElseGet(() -> new LeftNavigationItem[0])).build())
 
 //                                new LeftNavigationItem("Registration", VaadinIcon.ENTER.create(), RegistrationView.class)
 //                                ,

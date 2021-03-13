@@ -13,6 +13,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.templatemodel.TemplateModel;
 import lombok.extern.slf4j.Slf4j;
 import ru.volkov.guest.MainAppLayout;
@@ -22,9 +23,9 @@ import ru.volkov.guest.data.service.carpass.CarPassService;
 import java.time.LocalDate;
 
 @Slf4j
+@Tag("get-pass-view")
 @JsModule("./views/getpass/get-pass-view.js")
 @CssImport("./views/getpass/get-pass-view.css")
-@Tag("get-pass-view")
 @PageTitle("Get pass")
 public class GetPassView extends PolymerTemplate<TemplateModel> {
 
