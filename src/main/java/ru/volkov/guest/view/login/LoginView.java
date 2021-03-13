@@ -8,6 +8,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import ru.volkov.guest.data.service.AuthService;
 
 @Tag("login-view")
 @PageTitle("Login")
@@ -27,8 +28,7 @@ public class LoginView extends VerticalLayout {
         component.setDescription("App for get pass");
 
         component.addLoginListener(e -> {
-            boolean isAuthenticated = authenticate(e);
-            if (isAuthenticated) {
+            if (authenticate(e)) {
                 navigateToMainPage();
             } else {
                 component.setError(true);
