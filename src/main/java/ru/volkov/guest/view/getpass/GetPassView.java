@@ -60,6 +60,7 @@ public class GetPassView extends PolymerTemplate<TemplateModel> {
             CarPass newPass = binder.getBean();
             authService.getAuthUser().ifPresent(authUser -> {
                 newPass.setUser(authUser);
+                newPass.setRootId(authUser.getRootId());
                 carPassService.update(newPass);
                 Notification
                         .show("Pass created")

@@ -37,9 +37,9 @@ public class DataGenerator {
 
             List<User> users = Arrays.asList(
                     new User(0, "owner", "OOO OWNER", "ProgerVolkov", "owner@email.ru", "+7 (777) 777-77-77", Role.OWNER, "owner"),
-                    new User(1,"guard", "Guard Vasia", "OOO OWNER", "guard@email.ru", "+6 (666) 666-66-66", Role.GUARD, "guard"),
-                    new User(1,"company", "OOO COMPANY", "OOO OWNER", "company@email.ru", "+5 (555) 555-55-55", Role.COMPANY, "company"),
-                    new User(3,"employee", "Employee Ivan", "OOO COMPANY", "employee@email.ru", "+4 (444) 444-44-44", Role.EMPLOYEE, "employee")
+                    new User(1, "guard", "Guard Vasia", "OOO OWNER", "guard@email.ru", "+6 (666) 666-66-66", Role.GUARD, "guard"),
+                    new User(1, "company", "OOO COMPANY", "OOO OWNER", "company@email.ru", "+5 (555) 555-55-55", Role.COMPANY, "company"),
+                    new User(3, "employee", "Employee Ivan", "OOO COMPANY", "employee@email.ru", "+4 (444) 444-44-44", Role.EMPLOYEE, "employee")
             );
             userRepository.saveAll(users);
 
@@ -54,7 +54,7 @@ public class DataGenerator {
     }
 
     private List<CarPass> generateCarPass(int count) {
-        return Stream.generate(() -> new CarPass(generateRandomHexString(7), rndDate(7)))
+        return Stream.generate(() -> new CarPass(3, generateRandomHexString(7), rndDate(7)))
                 .limit(count)
                 .collect(Collectors.toList());
     }

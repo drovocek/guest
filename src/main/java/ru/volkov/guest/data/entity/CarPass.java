@@ -1,8 +1,8 @@
 package ru.volkov.guest.data.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Formula;
 import ru.volkov.guest.data.AbstractEntity;
 
@@ -13,9 +13,9 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 public class CarPass extends AbstractEntity implements Serializable {
 
@@ -30,10 +30,18 @@ public class CarPass extends AbstractEntity implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+//    private boolean enabled = true;
+//    @Formula("(SELECT u.full_name FROM User u WHERE u.id = root_id)")
+//    private String fullName;
+
+    @Formula("(SELECT u.full_name FROM User u WHERE u.id = user_id)")
+    private String creatorName;
+
     @Formula("(SELECT u.full_name FROM User u WHERE u.id = root_id)")
     private String rootName;
 
-    public CarPass(String regNum, LocalDate arrivalDate) {
+    public CarPass(Integer rootId, String regNum, LocalDate arrivalDate) {
+        this.rootId = rootId;
         this.regNum = regNum;
         this.arrivalDate = arrivalDate;
     }
