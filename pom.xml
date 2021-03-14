@@ -15,6 +15,7 @@
         <appreciated.version>4.0.0</appreciated.version>
     </properties>
 
+    g
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
