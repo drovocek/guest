@@ -45,9 +45,9 @@ public class PassesView extends PolymerTemplate<TemplateModel> {
         grid.addColumn(CarPass::getRegNum)
                 .setHeader("Registration Number")
                 .setSortProperty("regNum");
-        grid.addColumn(CarPass::getCompanyName)
-                .setHeader("Company")
-                .setSortProperty("companyName");
+        grid.addColumn(CarPass::getRootName)
+                .setHeader("Root creator")
+                .setSortProperty("root");
         grid.addColumn(CarPass::getArrivalDate)
                 .setHeader("Arrival Date")
                 .setSortProperty("arrivalDate");

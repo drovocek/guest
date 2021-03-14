@@ -15,7 +15,6 @@ import ru.volkov.guest.data.entity.User;
 import ru.volkov.guest.data.service.user.UserRepository;
 import ru.volkov.guest.util.exception.AuthException;
 import ru.volkov.guest.util.exception.NotFoundException;
-import ru.volkov.guest.view.admin.company.CompaniesView;
 import ru.volkov.guest.view.admin.pass.PassesView;
 import ru.volkov.guest.view.admin.user.UsersView;
 import ru.volkov.guest.view.getpass.GetPassView;
@@ -41,7 +40,7 @@ public class AuthService {
     }
 
     public void authenticate(String name, String password) {
-        User user = repository.findUsersByName(name);
+        User user = repository.findUsersByUserName(name);
         if (user == null) {
             throw new NotFoundException("No such user");
         } else if (!user.checkPassword(password)) {
@@ -60,9 +59,9 @@ public class AuthService {
 
     public List<Routes> getAuthRoutes(Role role) {
         return switch (role) {
-            case OWNER -> List.of(GET_PASS, MEET, COMPANIES, USERS, PASSES, SETTINGS, LOG_OUT);
+            case OWNER -> List.of(GET_PASS, MEET, USERS, PASSES, SETTINGS, LOG_OUT);
             case COMPANY -> List.of(GET_PASS, USERS, PASSES, SETTINGS, LOG_OUT);
-            case USER -> List.of(GET_PASS, PASSES, SETTINGS, LOG_OUT);
+            case EMPLOYEE -> List.of(GET_PASS, PASSES, SETTINGS, LOG_OUT);
             case GUARD -> List.of(MEET, PASSES, SETTINGS, LOG_OUT);
         };
     }
@@ -80,7 +79,6 @@ public class AuthService {
     public enum Routes {
         GET_PASS("get-pass", "Get Pass", GetPassView.class, GOLF),
         MEET("meet", "Meet", MeetView.class, CHECK_SQUARE_O),
-        COMPANIES("companies", "Companies", CompaniesView.class, PIGGY_BANK_COIN),
         USERS("users", "Users", UsersView.class, VaadinIcon.USERS),
         PASSES("passes", "Passes", PassesView.class, USER_CARD),
         LOG_OUT("logout", "LogOut", LogOutView.class, ARROW_LEFT),

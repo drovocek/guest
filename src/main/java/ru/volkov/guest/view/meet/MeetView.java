@@ -24,11 +24,9 @@ import com.vaadin.flow.component.polymertemplate.Id;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.templatemodel.TemplateModel;
 import lombok.extern.slf4j.Slf4j;
-import ru.volkov.guest.MainAppLayout;
 import ru.volkov.guest.data.entity.CarPass;
 import ru.volkov.guest.data.service.carpass.CarPassService;
 
@@ -60,7 +58,7 @@ public class MeetView extends PolymerTemplate<TemplateModel> {
         arrivalDate.setValue(LocalDate.now());
 
         companyName.setClearButtonVisible(true);
-        companyName.setItemLabelGenerator((ItemLabelGenerator<CarPass>) CarPass::getCompanyName);
+        companyName.setItemLabelGenerator((ItemLabelGenerator<CarPass>) CarPass::getRootName);
 
         arrivalDate.addValueChangeListener(event -> fillDataByFilters());
         companyName.addValueChangeListener(event -> fillDataByFilters());
@@ -72,7 +70,7 @@ public class MeetView extends PolymerTemplate<TemplateModel> {
         List<CarPass> data = service.getAllSortedByDate(arrivalDate.getValue());
         if (!companyName.isEmpty()) {
             data = data.stream()
-                    .filter(val -> val.getCompanyName().equals(companyName.getValue().getCompanyName()))
+                    .filter(val -> val.getRootName().equals(companyName.getValue().getRootName()))
                     .collect(Collectors.toList());
         } else {
             companyName.setItems(data);
@@ -150,7 +148,7 @@ public class MeetView extends PolymerTemplate<TemplateModel> {
                         label.getElement().getStyle().set("font-weight", "bold");
                     });
             companyNameCover.getChildren().findFirst()
-                    .ifPresent(label -> ((Label) label).setText(carPass.getCompanyName()));
+                    .ifPresent(label -> ((Label) label).setText(carPass.getRootName()));
 
             Icon icon;
             if (carPass.isPassed()) {

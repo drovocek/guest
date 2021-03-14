@@ -15,6 +15,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.templatemodel.TemplateModel;
 import lombok.extern.slf4j.Slf4j;
 import ru.volkov.guest.data.entity.CarPass;
+import ru.volkov.guest.data.service.AuthService;
 import ru.volkov.guest.data.service.carpass.CarPassService;
 
 import java.time.LocalDate;
@@ -36,11 +37,13 @@ public class GetPassView extends PolymerTemplate<TemplateModel> {
     @Id("clear")
     private Button clear;
 
-    private final CarPassService service;
+    private final CarPassService carPassService;
+    private final AuthService authService;
     private final Binder<CarPass> binder = new Binder(CarPass.class);
 
-    public GetPassView(CarPassService service) {
-        this.service = service;
+    public GetPassView(CarPassService carPassService, AuthService authService) {
+        this.carPassService = carPassService;
+        this.authService = authService;
         binder.bindInstanceFields(this);
         binder.forField(regNum)
                 .withValidator(name -> name.length() > 8 && name.length() < 11,
@@ -55,13 +58,15 @@ public class GetPassView extends PolymerTemplate<TemplateModel> {
     private void save() {
         if (binder.validate().isOk()) {
             CarPass newPass = binder.getBean();
-            newPass.setCompanyName("OOO Roga-Kopita");
-            service.update(newPass);
-            Notification
-                    .show("Pass created")
-                    .addThemeName("success");
-            clearForm();
-            navigateToMainPage();
+            authService.getAuthUser().ifPresent(authUser -> {
+                newPass.setUser(authUser);
+                carPassService.update(newPass);
+                Notification
+                        .show("Pass created")
+                        .addThemeName("success");
+                clearForm();
+                navigateToMainPage();
+            });
         }
     }
 

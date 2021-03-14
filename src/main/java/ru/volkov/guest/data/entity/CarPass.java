@@ -1,44 +1,40 @@
 package ru.volkov.guest.data.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.hibernate.annotations.Formula;
 import ru.volkov.guest.data.AbstractEntity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 public class CarPass extends AbstractEntity implements Serializable {
 
     private String regNum;
-
+    private Integer rootId;
     private LocalDate arrivalDate;
-
     private LocalDateTime regDataTime = LocalDateTime.now();
 
-    private boolean passed;
+    private boolean passed = false;
+    private LocalDateTime passedDataTime;
 
-//    private LocalDateTime passedDataTime;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
-    private String companyName;
+    @Formula("(SELECT u.full_name FROM User u WHERE u.id = root_id)")
+    private String rootName;
 
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "company_id", nullable = false)
-//    private Company company;
-
-    public CarPass(Integer id, String regNum, LocalDate arrivalDate, boolean passed, String companyName) {
-        setId(id);
+    public CarPass(String regNum, LocalDate arrivalDate) {
         this.regNum = regNum;
         this.arrivalDate = arrivalDate;
-        this.passed = passed;
-        this.companyName = companyName;
     }
 }

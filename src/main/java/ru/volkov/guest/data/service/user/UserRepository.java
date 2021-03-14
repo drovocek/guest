@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.volkov.guest.data.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
-    User findUsersByName(String name);
+    User findUsersByUserName(String userName);
 }

@@ -72,10 +72,11 @@
       "webpack-merge": "4.2.2",
       "webpack-dev-server": "3.11.0"
     },
-    "hash": "024be73efde59fc3647b6ecf074e10624ce40a687977b165a30047933f45fd40"
+    "hash": "99f8eb2b2aa8cad75c7fff64aace01394db0148616f3f76852a0350ec444a793"
   },
   "dependencies": {
     "@polymer/app-layout": "3.1.0",
+    "@polymer/gold-phone-input": "^3.0.1",
     "@polymer/iron-collapse": "3.0.1",
     "@polymer/iron-icon": "3.0.1",
     "@polymer/iron-list": "3.1.0",
@@ -90,7 +91,7 @@
     "@vaadin/vaadin-avatar": "1.0.0",
     "@vaadin/vaadin-board": "2.2.0",
     "@vaadin/vaadin-button": "2.4.0",
-    "@vaadin/vaadin-charts": "6.3.1",
+    "@vaadin/vaadin-charts": "^8.0.2",
     "@vaadin/vaadin-checkbox": "2.5.0",
     "@vaadin/vaadin-combo-box": "5.4.7",
     "@vaadin/vaadin-confirm-dialog": "1.3.0",
@@ -119,7 +120,7 @@
     "@vaadin/vaadin-radio-button": "1.5.1",
     "@vaadin/vaadin-rich-text-editor": "1.3.0",
     "@vaadin/vaadin-select": "2.4.0",
-    "@vaadin/vaadin-shrinkwrap": "14.4.8",
+    "@vaadin/vaadin-shrinkwrap": "^19.0.0",
     "@vaadin/vaadin-split-layout": "4.3.0",
     "@vaadin/vaadin-tabs": "3.2.0",
     "@vaadin/vaadin-text-field": "2.8.3",
