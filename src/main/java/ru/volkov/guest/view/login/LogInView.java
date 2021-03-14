@@ -24,7 +24,6 @@ public class LogInView extends VerticalLayout implements BeforeEnterObserver {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        log.info("\nbeforeEnter1");
         if (authService.getAuthUser().isPresent()) {
             login.close();
             authService.getAuthUserRoutes().ifPresent(routes ->
