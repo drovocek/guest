@@ -66,12 +66,44 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         this.authService = authService;
         this.userService = userService;
 
+        initGrid();
+        initForm();
+    }
+
+    private void initGrid() {
         addGridColumns(grid);
-        addGridStyles(grid);
         addGridListeners(grid);
+        addGridStyles(grid);
         grid.setDataProvider(new CrudServiceDataProvider<>(userService));
+    }
+
+    private void initForm() {
         addFormBinder();
         configFormComponents();
+    }
+
+    private void addGridColumns(Grid<User> grid) {
+        grid.addComponentColumn((user) ->
+                createIconComponentByBoolean(user.getEnabled(), () -> changeEnabled(user.getId())))
+                .setHeader("Enabled")
+                .setSortProperty("enabled");
+        addColumns(grid, User.class);
+    }
+
+    private void addGridListeners(Grid<User> grid) {
+        grid.asSingleSelect().addValueChangeListener(event -> {
+            if (event.getValue() != null) {
+                Optional<User> user = userService.get(event.getValue().getId());
+                if (user.isPresent()) {
+                    populateForm(user.get());
+                } else {
+                    refreshGrid();
+                    throw new NotFoundException("User not found");
+                }
+            } else {
+                clearForm();
+            }
+        });
     }
 
     private void addFormBinder() {
@@ -117,7 +149,6 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
                     }
                 })
         );
-
     }
 
     private void changeEnabled(Integer id) {
@@ -144,30 +175,6 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         Optional.ofNullable(user).ifPresent(us ->
                 us.setPhone(us.getPhone().substring(3)));
         binder.readBean(user);
-    }
-
-    private void addGridColumns(Grid<User> grid) {
-        grid.addComponentColumn((user) ->
-                createIconComponentByBoolean(user.getEnabled(), () -> changeEnabled(user.getId())))
-                .setHeader("Enabled")
-                .setSortProperty("enabled");
-        addColumns(grid, User.class);
-    }
-
-    private void addGridListeners(Grid<User> grid) {
-        grid.asSingleSelect().addValueChangeListener(event -> {
-            if (event.getValue() != null) {
-                Optional<User> user = userService.get(event.getValue().getId());
-                if (user.isPresent()) {
-                    populateForm(user.get());
-                } else {
-                    refreshGrid();
-                    throw new NotFoundException("User not found");
-                }
-            } else {
-                clearForm();
-            }
-        });
     }
 
     private Icon createIconComponentByBoolean(boolean bool, Runnable... clickAction) {
