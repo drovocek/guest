@@ -76,5 +76,4 @@ public class DataGenerator {
         long rand = (long) (Math.random() * ++max) + min;
         return LocalDate.ofEpochDay(rand);
     }
-
 }
