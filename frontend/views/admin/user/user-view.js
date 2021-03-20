@@ -25,15 +25,40 @@ class UserView extends PolymerElement {
                 <div style="width:400px;display:flex;flex-direction:column;">
                     <div style="padding:var(--lumo-space-l);flex-grow:1;">
                         <vaadin-form-layout>
-                            <vaadin-combo-box label="Role" id="role"></vaadin-combo-box>
-                            <vaadin-text-field label="Full name" id="fullName"></vaadin-text-field>
+                            <vaadin-combo-box
+                                    id="role"
+                                    label="Role"
+                                    required="true"
+                            ></vaadin-combo-box>
+                            <vaadin-text-field
+                                    id="fullName"
+                                    label="Full name" 
+                                    placeholder="User full name"
+                                    clear-button-visible
+                                    minlength="3"
+                                    maxlength="40"
+                                    required="true"
+                            ></vaadin-text-field>
                             <vaadin-email-field
                                     id="email"
                                     label="Email"
+                                    placeholder="user@email.com"
+                                    clear-button-visible
+                                    maxlength="30"
+                                    required="true"
                             ></vaadin-email-field>
-                            <vaadin-text-field label="Phone" id="phone"></vaadin-text-field>
+                            <vaadin-text-field
+                                    id="phone"
+                                    label="Phone"
+                                    clear-button-visible
+                                    minlength="15"
+                                    maxlength="15"
+                                    required="true"
+                            ></vaadin-text-field>
                             <vaadin-checkbox-group label="Enabled" theme="vertical">
-                                <vaadin-checkbox id="enabled" checked></vaadin-checkbox>
+                                <vaadin-checkbox 
+                                        id="enabled"
+                                ></vaadin-checkbox>
                             </vaadin-checkbox-group>
                         </vaadin-form-layout>
                     </div>

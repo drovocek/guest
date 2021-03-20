@@ -11,33 +11,54 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static ru.volkov.guest.util.ConfigHelper.GridHeader;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
 public class User extends AbstractEntity implements Serializable {
 
-    private String userName = "default";
-    private String fullName;
-    private Integer rootId;
-    private String email = "default@email.ru";
-    private String phone;
+//    @GridHeader(name = "Enabled")
+    private Boolean enabled = true;
 
-    private boolean enabled = true;
-    private String passwordSalt;
-    private String passwordHash;
-
-    private LocalDate regDate = LocalDate.now();
-    private LocalDateTime lastActivity = LocalDateTime.now();
-
+    @GridHeader(name = "Role")
     private Role role;
 
-    @Formula("(SELECT COUNT(*) FROM Car_Pass cp WHERE cp.user_id = id)")
-    private int passCount;
-    @Formula("(SELECT COUNT(*) FROM User u WHERE u.id = root_id)")
-    private int childrenCount;
+    @GridHeader(name = "Root creator")
     @Formula("(SELECT u.full_name FROM User u WHERE u.id = root_id)")
     private String rootName;
+
+    @GridHeader(name = "Full name")
+    private String fullName;
+
+    @GridHeader(name = "Email")
+    private String email = "default@email.ru";
+
+    @GridHeader(name = "Phone")
+    private String phone;
+
+    @GridHeader(name = "Child users")
+    @Formula("(SELECT COUNT(*) FROM User u WHERE u.id = root_id)")
+    private int childrenCount;
+
+    @GridHeader(name = "Pass count")
+    @Formula("(SELECT COUNT(*) FROM Car_Pass cp WHERE cp.user_id = id)")
+    private int passCount;
+
+    @GridHeader(name = "Last activity")
+    private LocalDateTime lastActivity = LocalDateTime.now();
+
+    @GridHeader(name = "Registration date")
+    private LocalDate regDate = LocalDate.now();
+
+    @GridHeader(name = "User name")
+    private String userName = "default";
+
+    private Integer rootId;
+
+    private String passwordSalt;
+    private String passwordHash;
 
     public User(Integer rootId, String userName, String fullName, String rootName, String email, String phone, Role role, String password) {
         this.rootId = rootId;

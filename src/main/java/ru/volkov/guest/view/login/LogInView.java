@@ -42,7 +42,7 @@ public class LogInView extends VerticalLayout implements BeforeEnterObserver {
                 " username/password: \n" +
                 "- owner/owner, \n" +
                 "- company/company, \n" +
-                "- user/user, \n" +
+                "- employee/employee, \n" +
                 "- guard/guard;");
 
         login.addLoginListener(e -> {

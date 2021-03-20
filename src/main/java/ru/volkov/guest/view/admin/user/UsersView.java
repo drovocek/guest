@@ -6,7 +6,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -17,14 +16,12 @@ import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
-import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.templatemodel.TemplateModel;
 import org.apache.commons.lang3.StringUtils;
-import org.vaadin.artur.helpers.CrudService;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import ru.volkov.guest.data.entity.Role;
 import ru.volkov.guest.data.entity.User;
@@ -37,6 +34,8 @@ import java.util.Optional;
 
 import static com.vaadin.flow.component.notification.Notification.Position.BOTTOM_START;
 import static ru.volkov.guest.data.entity.Role.*;
+import static ru.volkov.guest.util.ConfigHelper.addColumns;
+import static ru.volkov.guest.util.ConfigHelper.addGridStyles;
 
 @JsModule("./views/admin/user/user-view.js")
 @CssImport("./views/admin/user/user-view.css")
@@ -59,7 +58,6 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     private Grid<User> grid;
 
     private BeanValidationBinder<User> binder;
-    private User user;
 
     private final AuthService authService;
     private final UserService userService;
@@ -71,7 +69,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         addGridColumns(grid);
         addGridStyles(grid);
         addGridListeners(grid);
-        addGridDataProvider(grid, userService);
+        grid.setDataProvider(new CrudServiceDataProvider<>(userService));
         addFormBinder();
         configFormComponents();
     }
@@ -79,7 +77,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     private void addFormBinder() {
         binder = new BeanValidationBinder<>(User.class);
         binder.forField(fullName)
-                .withValidator(name -> name.length() > 5, "Name size must be more then 5")
+                .withValidator(name -> name.length() > 3, "Name size must be more then 5")
                 .bind("fullName");
         binder.forField(email)
                 .withValidator(new EmailValidator("Enter a valid email address"))
@@ -91,31 +89,13 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     }
 
     private void configFormComponents() {
-        enabled.setValue(true);
-
-        role.setRequired(true);
         role.setItems(COMPANY, GUARD, EMPLOYEE);
         role.setValue(COMPANY);
 
-        fullName.setValueChangeMode(ValueChangeMode.EAGER);
-        fullName.setRequiredIndicatorVisible(true);
-        fullName.setRequired(true);
-        fullName.setClearButtonVisible(true);
-        fullName.setPlaceholder("User full name");
-        fullName.setMinLength(5);
-        fullName.setMaxLength(40);
-
-        email.setValueChangeMode(ValueChangeMode.EAGER);
-        email.setRequiredIndicatorVisible(true);
-        email.setClearButtonVisible(true);
-        email.setPlaceholder("user@email.com");
-        email.setMaxLength(30);
-
-        phone.setRequiredIndicatorVisible(true);
         phone.setValueChangeMode(ValueChangeMode.EAGER);
+
         PrefixUtil.setPrefixComponent(phone, new Span("+7 "));
-        phone.setMaxLength(15);
-        phone.setClearButtonVisible(true);
+
 //        phone.setPattern("[0-9.,]*");
 //        phone.setPreventInvalidInput(true);
         phone.addValueChangeListener(event ->
@@ -137,11 +117,12 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
                     }
                 })
         );
+
     }
 
     private void changeEnabled(Integer id) {
         userService.get(id).filter(user -> {
-            user.setEnabled(!user.isEnabled());
+            user.setEnabled(!user.getEnabled());
             userService.update(user);
             refreshGrid();
             getDefNotify("Status updated").addThemeName("success");
@@ -156,55 +137,21 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
 
     private void clearForm() {
         populateForm(null);
+        role.setValue(COMPANY);
     }
 
-    private void populateForm(User value) {
-        this.user = value;
-        binder.readBean(this.user);
+    private void populateForm(User user) {
+        Optional.ofNullable(user).ifPresent(us ->
+                us.setPhone(us.getPhone().substring(3)));
+        binder.readBean(user);
     }
 
     private void addGridColumns(Grid<User> grid) {
         grid.addComponentColumn((user) ->
-                createIconComponentByBoolean(
-                        user.isEnabled(), () -> changeEnabled(user.getId())))
+                createIconComponentByBoolean(user.getEnabled(), () -> changeEnabled(user.getId())))
                 .setHeader("Enabled")
                 .setSortProperty("enabled");
-        grid.addColumn(User::getRole)
-                .setHeader("Role")
-                .setSortProperty("role");
-        grid.addColumn(User::getRootName)
-                .setHeader("Root creator")
-                .setSortProperty("rootName");
-        grid.addColumn(User::getFullName)
-                .setHeader("Full name")
-                .setSortProperty("fullName");
-        grid.addColumn(User::getEmail)
-                .setHeader("Email")
-                .setSortProperty("email");
-        grid.addColumn(User::getPhone)
-                .setHeader("Phone")
-                .setSortProperty("phone");
-        grid.addColumn(User::getChildrenCount)
-                .setHeader("Number of child users")
-                .setSortProperty("childrenCount");
-        grid.addColumn(User::getPassCount)
-                .setHeader("Pass count")
-                .setSortProperty("passCount");
-        grid.addColumn(User::getLastActivity)
-                .setHeader("Last activity")
-                .setSortProperty("lastActivity");
-        grid.addColumn(User::getRegDate)
-                .setHeader("Registration date")
-                .setSortProperty("regDate");
-        grid.addColumn(User::getUserName)
-                .setHeader("User name")
-                .setSortProperty("userName");
-    }
-
-    private void addGridStyles(Grid<User> grid) {
-        grid.getColumns().forEach(col -> col.setAutoWidth(true));
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
-        grid.setHeightFull();
+        addColumns(grid, User.class);
     }
 
     private void addGridListeners(Grid<User> grid) {
@@ -212,7 +159,6 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
             if (event.getValue() != null) {
                 Optional<User> user = userService.get(event.getValue().getId());
                 if (user.isPresent()) {
-                    System.out.println(user);
                     populateForm(user.get());
                 } else {
                     refreshGrid();
@@ -222,10 +168,6 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
                 clearForm();
             }
         });
-    }
-
-    private void addGridDataProvider(Grid<User> grid, CrudService<User, Integer> service) {
-        grid.setDataProvider(new CrudServiceDataProvider<>(service));
     }
 
     private Icon createIconComponentByBoolean(boolean bool, Runnable... clickAction) {
@@ -243,6 +185,11 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         return icon;
     }
 
+    private Notification getDefNotify(String message) {
+        return Notification
+                .show(message, 2000, BOTTOM_START);
+    }
+
     @EventHandler
     public void clear() {
         clearForm();
@@ -252,32 +199,20 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
 
     @EventHandler
     public void save() {
-        try {
-            if (binder.isValid()) {
-                if (this.user == null) {
-                    this.user = new User();
+        User user = new User();
+        if (binder.writeBeanIfValid(user)) {
+            authService.getAuthUser().ifPresent(authUser -> {
+                if (user.getRootId() == null || user.getRootId().equals(authUser.getId())) {
+                    user.setRootId(authUser.getId());
+                    user.setPhone("+7 ".concat(user.getPhone()));
+                    userService.update(user);
+                    clearForm();
+                    refreshGrid();
+                    getDefNotify("User created").addThemeName("success");
+                } else {
+                    getDefNotify("You is not root, can't update not yours, choose another").addThemeName("error");
                 }
-                binder.writeBean(this.user);
-                authService.getAuthUser().ifPresent(authUser -> {
-                    if (user.getRootId() == null || user.getRootId().equals(authUser.getId())) {
-                        this.user.setRootId(authUser.getId());
-                        this.user.setPhone("+7 ".concat(user.getPhone()));
-                        userService.update(this.user);
-                        clearForm();
-                        refreshGrid();
-                        getDefNotify("User created").addThemeName("success");
-                    } else {
-                        getDefNotify("You is not root, can't update not yours, choose another").addThemeName("error");
-                    }
-                });
-            }
-        } catch (ValidationException validationException) {
-            getDefNotify("Save aborted").addThemeName("error");
+            });
         }
-    }
-
-    private Notification getDefNotify(String message) {
-        return Notification
-                .show(message, 2000, BOTTOM_START);
     }
 }
