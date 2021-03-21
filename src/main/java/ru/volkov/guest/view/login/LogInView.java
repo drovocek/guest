@@ -38,12 +38,12 @@ public class LogInView extends VerticalLayout implements BeforeEnterObserver {
 //        login.addLoginListener(e -> login.close());
         login.setOpened(true);
         login.setTitle("Guest");
-        login.setDescription("App for get pass. For test use " +
-                " username/password: \n" +
-                "- owner/owner, \n" +
-                "- company/company, \n" +
-                "- employee/employee, \n" +
-                "- guard/guard;");
+        login.setDescription("""
+                App for get pass. For test use  username/password:\s
+                - owner/owner,\s
+                - company/company,\s
+                - employee/employee,\s
+                - guard/guard;""");
 
         login.addLoginListener(e -> {
             try {

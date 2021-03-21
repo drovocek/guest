@@ -3,8 +3,8 @@ package ru.volkov.guest.util;
 import com.google.common.collect.Maps;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.notification.Notification;
 import lombok.extern.slf4j.Slf4j;
-import ru.volkov.guest.data.entity.User;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.vaadin.flow.component.notification.Notification.Position.BOTTOM_START;
+
 @Slf4j
 public final class ConfigHelper {
 
@@ -30,12 +32,10 @@ public final class ConfigHelper {
     }
 
     private static LinkedHashMap<String, String> getHeaders(Class<?> beanType) {
-        log.info("getHeaders({})", beanType.getSimpleName());
         CashStorage.manageHeadersCash(10);
         return CashStorage.headersByClassCash.computeIfAbsent(beanType, (bt) ->
                 Arrays.stream(bt.getDeclaredFields())
                         .map(field -> {
-                            log.info("getHeaders(NEW)");
                             String annotationVal = Arrays.stream(field.getAnnotations())
                                     .filter(annotation -> annotation.annotationType().equals(GridHeader.class))
                                     .map(annotation -> ((GridHeader) annotation).name())
@@ -51,13 +51,11 @@ public final class ConfigHelper {
     }
 
     private static Map<String, Function<Object, Object>> getBeanGetters(Class<?> beanType) {
-        log.info("getBeanGetters({})", beanType.getSimpleName());
         CashStorage.manageGettersCash(10);
         return CashStorage.gettersByClassCash.computeIfAbsent(beanType, (bt) ->
                 Arrays.stream(bt.getDeclaredFields())
                         .filter(field -> Arrays.stream(field.getAnnotations()).anyMatch(annotation -> annotation.annotationType().equals(GridHeader.class)))
                         .map(field -> {
-                            log.info("getBeanGetters(NEW)");
                             Function<Object, Object> getterFunc = (entity) -> {
                                 String paramName = field.getName();
                                 String getterName = "get".concat(Character.toUpperCase(paramName.charAt(0)) + paramName.substring(1));
@@ -89,18 +87,21 @@ public final class ConfigHelper {
         private final static Map<Class<?>, Map<String, Function<Object, Object>>> gettersByClassCash = new HashMap<>();
 
         private static void manageHeadersCash(int maxSize) {
-            log.info("manageHeadersCash({})", headersByClassCash.size());
             if (headersByClassCash.size() > maxSize) {
                 headersByClassCash.clear();
             }
         }
 
         private static void manageGettersCash(int maxSize) {
-            log.info("manageGettersCash({})", gettersByClassCash.size());
             if (gettersByClassCash.size() > maxSize) {
                 gettersByClassCash.clear();
             }
         }
+    }
+
+    public static Notification getDefNotify(String message) {
+        return Notification
+                .show(message, 2000, BOTTOM_START);
     }
 
     @Target(ElementType.FIELD)

@@ -6,10 +6,8 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.polymertemplate.EventHandler;
 import com.vaadin.flow.component.polymertemplate.Id;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
@@ -17,31 +15,33 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.validator.EmailValidator;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.templatemodel.TemplateModel;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
+import org.vaadin.textfieldformatter.CustomStringBlockFormatter.Builder;
 import ru.volkov.guest.data.entity.Role;
 import ru.volkov.guest.data.entity.User;
 import ru.volkov.guest.data.service.AuthService;
 import ru.volkov.guest.data.service.user.UserService;
-import ru.volkov.guest.util.exception.PrefixUtil;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-import static com.vaadin.flow.component.notification.Notification.Position.BOTTOM_START;
 import static ru.volkov.guest.data.entity.Role.*;
-import static ru.volkov.guest.util.ConfigHelper.addColumns;
-import static ru.volkov.guest.util.ConfigHelper.addGridStyles;
+import static ru.volkov.guest.util.ConfigHelper.*;
 
 @JsModule("./views/admin/user/user-view.js")
 @CssImport("./views/admin/user/user-view.css")
 @Tag("user-view")
 @PageTitle("User")
 public class UsersView extends PolymerTemplate<TemplateModel> {
+
+    private final static String PROD_ROOT = "https://getpass.herokuapp.com/";
+    private final static String TEST_ROOT = "http://localhost:8080/";
 
     @Id("role")
     private ComboBox<Role> role;
@@ -61,10 +61,14 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
 
     private final AuthService authService;
     private final UserService userService;
+    private final MailSender mailSender;
 
-    public UsersView(UserService userService, AuthService authService) {
+    private User user = new User();
+
+    public UsersView(UserService userService, AuthService authService, MailSender mailSender) {
         this.authService = authService;
         this.userService = userService;
+        this.mailSender = mailSender;
 
         initGrid();
         initForm();
@@ -91,19 +95,17 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     }
 
     private void addGridListeners(Grid<User> grid) {
-        grid.asSingleSelect().addValueChangeListener(event -> {
-            if (event.getValue() != null) {
-                Optional<User> user = userService.get(event.getValue().getId());
-                if (user.isPresent()) {
-                    populateForm(user.get());
-                } else {
-                    refreshGrid();
-                    throw new NotFoundException("User not found");
-                }
-            } else {
-                clearForm();
-            }
-        });
+        grid.asSingleSelect().addValueChangeListener(event ->
+                Optional.ofNullable(event.getValue())
+                        .ifPresentOrElse(
+                                bean -> {
+                                    System.out.println("bean: " + bean);
+                                    this.user = userService.getById(bean.getId());
+                                    System.out.println("user: " + bean);
+                                    populateForm(user);
+                                },
+                                this::clearForm
+                        ));
     }
 
     private void addFormBinder() {
@@ -115,7 +117,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
                 .withValidator(new EmailValidator("Enter a valid email address"))
                 .bind("email");
         binder.forField(phone)
-                .withValidator(phone -> phone.length() == 15, "Enter a valid phone number")
+                .withValidator(phone -> phone.length() == 18, "Enter a valid phone number")
                 .bind("phone");
         binder.bindInstanceFields(this);
     }
@@ -124,31 +126,12 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         role.setItems(COMPANY, GUARD, EMPLOYEE);
         role.setValue(COMPANY);
 
-        phone.setValueChangeMode(ValueChangeMode.EAGER);
-
-        PrefixUtil.setPrefixComponent(phone, new Span("+7 "));
-
-//        phone.setPattern("[0-9.,]*");
-//        phone.setPreventInvalidInput(true);
-        phone.addValueChangeListener(event ->
-                Optional.ofNullable(event.getValue()).ifPresent(value -> {
-                    if (!event.getValue().contains(event.getOldValue())) {
-                        phone.setValue("");
-                    } else if (StringUtils.isNumericSpace(value.substring(value.length() - 1))) {
-                        if (value.length() == 1) {
-                            phone.setValue("(".concat(value));
-                        } else if (value.length() == 4) {
-                            phone.setValue(value.concat(") "));
-                        } else if (value.length() == 9) {
-                            phone.setValue(value.concat(" "));
-                        } else if (value.length() == 12) {
-                            phone.setValue(value.concat(" "));
-                        }
-                    } else {
-                        phone.setValue(value.substring(0, value.length() - 1));
-                    }
-                })
-        );
+        new Builder()
+                .blocks(0, 3, 3, 2, 2)
+                .delimiters("(", ") ", "-", "-")
+                .prefix("+7", true, " ")
+                .numeric()
+                .build().extend(phone);
     }
 
     private void changeEnabled(Integer id) {
@@ -167,13 +150,12 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     }
 
     private void clearForm() {
+        this.user = new User();
         populateForm(null);
         role.setValue(COMPANY);
     }
 
     private void populateForm(User user) {
-        Optional.ofNullable(user).ifPresent(us ->
-                us.setPhone(us.getPhone().substring(3)));
         binder.readBean(user);
     }
 
@@ -192,34 +174,51 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         return icon;
     }
 
-    private Notification getDefNotify(String message) {
-        return Notification
-                .show(message, 2000, BOTTOM_START);
-    }
-
     @EventHandler
     public void clear() {
         clearForm();
         refreshGrid();
-        role.setValue(COMPANY);
     }
 
     @EventHandler
     public void save() {
-        User user = new User();
-        if (binder.writeBeanIfValid(user)) {
+        if (binder.writeBeanIfValid(this.user)) {
             authService.getAuthUser().ifPresent(authUser -> {
-                if (user.getRootId() == null || user.getRootId().equals(authUser.getId())) {
-                    user.setRootId(authUser.getId());
-                    user.setPhone("+7 ".concat(user.getPhone()));
-                    userService.update(user);
-                    clearForm();
-                    refreshGrid();
-                    getDefNotify("User created").addThemeName("success");
+                if (user.getId() == null) {
+                    create(user, authUser.getId());
                 } else {
-                    getDefNotify("You is not root, can't update not yours, choose another").addThemeName("error");
+                    update(user, authUser.getId());
                 }
+                clearForm();
+                refreshGrid();
             });
+        }
+    }
+
+    private void create(User user, Integer rootId) {
+        String userName = user.getEmail().substring(0, user.getEmail().indexOf("@"));
+        user.setUserName(userName);
+        user.setRootId(rootId);
+        user.setActivationCode(RandomStringUtils.randomAlphanumeric(32));
+//        String activationUrl = TEST_ROOT
+//                .concat("registration?code=")
+//                .concat(user.getActivationCode());
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setFrom("guest@app.com");
+//        message.setSubject("Confirmation email");
+//        message.setText(activationUrl);
+//        message.setTo(user.getEmail());
+//        mailSender.send(message);
+        userService.update(user);
+        getDefNotify("User created").addThemeName("success");
+    }
+
+    private void update(User user, Integer rootId) {
+        if (user.getRootId() == null || user.getRootId().equals(rootId)) {
+            userService.update(user);
+            getDefNotify("User updated").addThemeName("success");
+        } else {
+            getDefNotify("You is not root, can't update not yours, choose another").addThemeName("error");
         }
     }
 }

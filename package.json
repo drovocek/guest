@@ -59,7 +59,8 @@
       "chance": "1.1.7",
       "element-match-media": "0.0.3",
       "@polymer/iron-media-query": "3.0.1",
-      "swiper": "^4.5.0"
+      "swiper": "^4.5.0",
+      "cleave.js": "1.6.0"
     },
     "devDependencies": {
       "webpack-babel-multi-target-plugin": "2.3.3",
@@ -72,7 +73,7 @@
       "webpack-merge": "4.2.2",
       "webpack-dev-server": "3.11.0"
     },
-    "hash": "99f8eb2b2aa8cad75c7fff64aace01394db0148616f3f76852a0350ec444a793"
+    "hash": "597042936add7e1996926307570a3bb29c320e09b2b173bd60ddcbb4ff823808"
   },
   "dependencies": {
     "@polymer/app-layout": "3.1.0",
@@ -133,7 +134,8 @@
     "express": "^4.17.1",
     "lit-element": "^2.2.1",
     "open": "^7.2.1",
-    "swiper": "^4.5.0"
+    "swiper": "^4.5.0",
+    "cleave.js": "1.6.0"
   },
   "devDependencies": {
     "@vaadin/vaadin-themable-mixin": "^1.6.2",

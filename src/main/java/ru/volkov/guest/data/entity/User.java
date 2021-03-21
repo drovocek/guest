@@ -1,6 +1,8 @@
 package ru.volkov.guest.data.entity;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.annotations.Formula;
@@ -19,7 +21,7 @@ import static ru.volkov.guest.util.ConfigHelper.GridHeader;
 @Entity
 public class User extends AbstractEntity implements Serializable {
 
-//    @GridHeader(name = "Enabled")
+    //    @GridHeader(name = "Enabled")
     private Boolean enabled = true;
 
     @GridHeader(name = "Role")
@@ -53,12 +55,13 @@ public class User extends AbstractEntity implements Serializable {
     private LocalDate regDate = LocalDate.now();
 
     @GridHeader(name = "User name")
-    private String userName = "default";
+    private String userName;
 
     private Integer rootId;
 
     private String passwordSalt;
     private String passwordHash;
+    private String activationCode;
 
     public User(Integer rootId, String userName, String fullName, String rootName, String email, String phone, Role role, String password) {
         this.rootId = rootId;
@@ -70,18 +73,11 @@ public class User extends AbstractEntity implements Serializable {
         this.role = role;
         this.passwordSalt = RandomStringUtils.random(32);
         this.passwordHash = DigestUtils.sha1Hex(password.concat(passwordSalt));
+        this.activationCode = RandomStringUtils.randomAlphanumeric(32);
     }
 
-    public boolean checkPassword(String password) {
+    public boolean isValidPassword(String password) {
         return DigestUtils.sha1Hex(password.concat(passwordSalt)).equals(passwordHash);
-    }
-
-    public String getUserName() {
-        if (userName.equals("default") && email != null && email.contains("@")) {
-            userName = email.substring(0, email.indexOf("@"));
-            return userName;
-        }
-        return userName;
     }
 
     @Override
@@ -102,6 +98,7 @@ public class User extends AbstractEntity implements Serializable {
                 ", passCount=" + passCount +
                 ", childrenCount=" + childrenCount +
                 ", rootName='" + rootName + '\'' +
+                ", activationCode='" + activationCode + '\'' +
                 '}';
     }
 }

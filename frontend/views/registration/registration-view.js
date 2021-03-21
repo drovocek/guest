@@ -19,37 +19,29 @@ class RegistrationView extends PolymerElement {
         return html`
             <vaadin-form-layout>
                 <vaadin-form-item>
-                    <h3>Company</h3>
+                    <h3>Registration</h3>
+                    <vaadin-password-field
+                            id="enterPass"
+                            label="Enter password"
+                            minlength="7"
+                            maxlength="20"
+                            required="true"
+                            clear-button-visible
+                    ></vaadin-password-field>
+                    <vaadin-password-field
+                            id="confirmPass"
+                            label="Confirm password"
+                            minlength="7"
+                            maxlength="20"
+                            required="true"
+                            clear-button-visible
+                    ></vaadin-password-field>
                 </vaadin-form-item>
                 <br>
                 <vaadin-form-item>
-                    <vaadin-text-field label="Name" id="name"></vaadin-text-field>
-                </vaadin-form-item>
-                <br>
-                <vaadin-form-item>
-                    <vaadin-email-field label="Email" id="email"></vaadin-email-field>
-                </vaadin-form-item>
-                <br>
-                <vaadin-form-item>
-                    <vaadin-text-field label="Phone"
-                                       id="phone"
-                                       pattern="\\d*"
-                                       prevent-invalid-input
-                    ></vaadin-text-field>
-                </vaadin-form-item>
-                <br>
-                <vaadin-form-item>
-                    <vaadin-password-field label="Enter password" id="enterPass"></vaadin-password-field>
-                </vaadin-form-item>
-                <br>
-                <vaadin-form-item>
-                    <vaadin-password-field label="Confirm password" id="confirmPass"></vaadin-password-field>
-                </vaadin-form-item>
-                <br>
-                <vaadin-form-item>
-                    <vaadin-horizontal-layout class="button-layout">
-                        <vaadin-button class="enter" id="enter" on-click="save">Save</vaadin-button>
-                        <vaadin-button class="clear" id="clear" on-click="clearForm">Clear</vaadin-button>
+                    <vaadin-horizontal-layout class="button-layout" theme="spacing">
+                        <vaadin-button theme="primary" id="enter" on-click="save">Save</vaadin-button>
+                        <vaadin-button theme="tertiary" slot="" id="clear" on-click="clear">Cancel</vaadin-button>
                     </vaadin-horizontal-layout>
                 </vaadin-form-item>
             </vaadin-form-layout>

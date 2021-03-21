@@ -51,8 +51,8 @@ class UserView extends PolymerElement {
                                     id="phone"
                                     label="Phone"
                                     clear-button-visible
-                                    minlength="15"
-                                    maxlength="15"
+                                    minlength="18"
+                                    maxlength="18"
                                     required="true"
                             ></vaadin-text-field>
                             <vaadin-checkbox-group label="Enabled" theme="vertical">

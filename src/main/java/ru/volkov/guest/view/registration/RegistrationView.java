@@ -4,31 +4,35 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.polymertemplate.EventHandler;
 import com.vaadin.flow.component.polymertemplate.Id;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
-import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.validator.EmailValidator;
-import com.vaadin.flow.data.validator.StringLengthValidator;
+import com.vaadin.flow.data.binder.BeanValidationBinder;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.templatemodel.TemplateModel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import ru.volkov.guest.data.service.AuthService;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static ru.volkov.guest.util.ConfigHelper.getDefNotify;
+
+@Slf4j
 @JsModule("./views/registration/registration-view.js")
 @CssImport("./views/registration/registration-view.css")
 @Tag("registration-view")
+@Route("registration")
 @PageTitle("Registration")
-public class RegistrationView extends PolymerTemplate<TemplateModel> {
+public class RegistrationView extends PolymerTemplate<TemplateModel> implements BeforeEnterObserver {
 
-    @Id("name")
-    private TextField name;
-    @Id("email")
-    private EmailField email;
-    @Id("phone")
-    private TextField phone;
     @Id("enterPass")
     private PasswordField enterPass;
     @Id("confirmPass")
@@ -39,68 +43,71 @@ public class RegistrationView extends PolymerTemplate<TemplateModel> {
     @Id("clear")
     private Button clear;
 
-//    private final Binder<Company> binder = new Binder(Company.class);
-//    private final CompanyService service;
-//
-//    public RegistrationView(CompanyService service) {
-//        this.service = service;
-//
-//        binder.setBean(new Company());
-//        binder.forField(name)
-//                .withValidator(new StringLengthValidator(
-//                        "Please add the company name", 1, null))
-//                .bind(Company::getName, Company::setName);
-//
-//        binder.forField(email)
-//                .withValidator((e) -> !email.getValue().trim().isEmpty(),
-//                        "Email cannot be empty")
-//                .withValidator(new EmailValidator("Incorrect email address"))
-//                .bind(Company::getEmail, Company::setEmail);
-//
-//        binder.forField(phone)
-//                .withValidator((p) -> !phone.getValue().trim().isEmpty(),
-//                        "Phone cannot be empty")
-//                .bind(Company::getPhone, Company::setPhone);
-//
-//        binder.forField(enterPass)
-//                .withValidator((p) -> !enterPass.getValue().trim().isEmpty(),
-//                        "Password cannot be empty")
-//                .withValidator((p) -> enterPass.getValue().equals(confirmPass.getValue()),
-//                        "Password must be equals")
-//                .bind(Company::getPassword, Company::setPassword);
-//
-//        binder.forField(confirmPass)
-//                .withValidator((p) -> !confirmPass.getValue().trim().isEmpty(),
-//                        "Password cannot be empty")
-//                .withValidator((p) -> enterPass.getValue().equals(confirmPass.getValue()),
-//                        "Password must be equals")
-//                .bind(Company::getPassword, Company::setPassword);
-//
-//        name.setRequiredIndicatorVisible(true);
-//        email.setRequiredIndicatorVisible(true);
-//        phone.setRequiredIndicatorVisible(true);
-//        enterPass.setRequiredIndicatorVisible(true);
-//        confirmPass.setRequiredIndicatorVisible(true);
-//    }
-//
-//    @EventHandler
-//    private void save() {
-//        if (binder.validate().isOk()) {
-//            service.update(binder.getBean());
-//            Notification.show(
-//                    String.format("Company %s registered", name.getValue()))
-//                    .addThemeName("success");
-//            clearForm();
-//            navigateToMainPage();
-//        }
-//    }
-//
-//    @EventHandler
-//    private void clearForm() {
-//        binder.setBean(new Company());
-//    }
-//
-//    private void navigateToMainPage() {
-//        getUI().ifPresent(ui -> ui.navigate("company"));
-//    }
+    private final AuthService authService;
+    private BeanValidationBinder<Password> binder;
+    private String code;
+
+    @Getter
+    @Setter
+    public class Password {
+        private String enterPass;
+        private String confirmPass;
+    }
+
+    public RegistrationView(AuthService authService) {
+        this.authService = authService;
+        initForm();
+    }
+
+    private void initForm() {
+        binder = new BeanValidationBinder<>(Password.class);
+
+        binder.forField(enterPass)
+                .withValidator((p) -> enterPass.getValue().equals(confirmPass.getValue()),
+                        "Passwords must be equals")
+                .bind("enterPass");
+
+        binder.forField(confirmPass)
+                .withValidator((p) -> enterPass.getValue().equals(confirmPass.getValue()),
+                        "Passwords must be equals")
+                .bind("confirmPass");
+
+        binder.bindInstanceFields(this);
+    }
+
+    @EventHandler
+    private void save() {
+        Password password = new Password();
+        if (binder.writeBeanIfValid(password)) {
+            authService.activate(password.getEnterPass(), code);
+            getDefNotify("You are registered");
+            clearForm();
+            navigateToMainPage();
+        }
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        Map<String, List<String>> parameters = event.getLocation().getQueryParameters().getParameters();
+        Optional.ofNullable(parameters.get("code")).ifPresent(paramList -> {
+            String code = paramList.get(0);
+            if (code != null && !authService.isActivated(code)) {
+                this.code = code;
+            } else {
+                event.forwardTo("login");
+            }
+        });
+        if (!parameters.containsKey("code")) {
+            event.forwardTo("login");
+        }
+    }
+
+    @EventHandler
+    private void clearForm() {
+        binder.setBean(new Password());
+    }
+
+    private void navigateToMainPage() {
+        getUI().ifPresent(ui -> ui.navigate("login"));
+    }
 }
