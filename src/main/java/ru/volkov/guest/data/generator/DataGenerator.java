@@ -39,15 +39,31 @@ public class DataGenerator {
                     new User(0, "owner", "OOO OWNER", "ProgerVolkov", "owner@email.ru", "+7 (777) 777-77-77", Role.OWNER, "owner"),
                     new User(1, "guard", "Guard Vasia", "OOO OWNER", "guard@email.ru", "+6 (666) 666-66-66", Role.GUARD, "guard"),
                     new User(1, "company", "OOO COMPANY", "OOO OWNER", "company@email.ru", "+5 (555) 555-55-55", Role.COMPANY, "company"),
-                    new User(3, "employee", "Employee Ivan", "OOO COMPANY", "employee@email.ru", "+4 (444) 444-44-44", Role.EMPLOYEE, "employee")
+                    new User(1, "rogacopita", "OOO ROGA&COPITA", "OOO OWNER", "rogacopita@email.ru", "+8 (888) 888-88-88", Role.COMPANY, "company"),
+                    new User(3, "employee", "Employee Ivan", "OOO COMPANY", "employee@email.ru", "+4 (444) 444-44-44", Role.EMPLOYEE, "employee"),
+                    new User(3, "mhsn", "Anansky Andrey", "OOO ROGA&COPITA", "mhsn@email.ru", "+9 (999) 999-99-99", Role.EMPLOYEE, "mhsn")
             );
             userRepository.saveAll(users);
 
-            List<CarPass> passes = generateCarPass(100);
+            List<CarPass> passesOwner = generateCarPass(36);
+            passesOwner.forEach(p -> p.setUser(users.get(0)));
+            carPassRepository.saveAll(passesOwner);
 
-            passes.forEach(p -> p.setUser(users.get(3)));
+            List<CarPass> passesCompany = generateCarPass(27);
+            passesCompany.forEach(p -> p.setUser(users.get(2)));
+            carPassRepository.saveAll(passesCompany);
 
-            carPassRepository.saveAll(passes);
+            List<CarPass> passesEmployee = generateCarPass(10);
+            passesEmployee.forEach(p -> p.setUser(users.get(4)));
+            carPassRepository.saveAll(passesEmployee);
+
+            List<CarPass> passesRoga = generateCarPass(20);
+            passesRoga.forEach(p -> p.setUser(users.get(3)));
+            carPassRepository.saveAll(passesRoga);
+
+            List<CarPass> passesMhsn = generateCarPass(77);
+            passesMhsn.forEach(p -> p.setUser(users.get(5)));
+            carPassRepository.saveAll(passesMhsn);
 
             logger.info("Generated demo data");
         };

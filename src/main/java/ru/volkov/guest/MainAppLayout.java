@@ -22,12 +22,12 @@ import ru.volkov.guest.data.service.AuthService;
 
 import java.util.Optional;
 
-/**
- * The main view is a top-level placeholder for other views.
- */
-@CssImport("./views/main/main-view.css")
-@PWA(name = "Guest", shortName = "Guest", enableInstallPrompt = false)
-@JsModule("./styles/shared-styles.js")
+///**
+// * The main view is a top-level placeholder for other views.
+// */
+//@CssImport("./views/main/main-view.css")
+//@PWA(name = "Guest", shortName = "Guest", enableInstallPrompt = false)
+//@JsModule("./styles/shared-styles.js")
 public class MainAppLayout extends AppLayout {
 
     private final Tabs menu;

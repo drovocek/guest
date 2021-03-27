@@ -1,5 +1,6 @@
 package ru.volkov.guest.data.service;
 
+import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigationItem;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
@@ -20,6 +21,7 @@ import ru.volkov.guest.data.entity.Role;
 import ru.volkov.guest.data.entity.User;
 import ru.volkov.guest.data.service.user.UserService;
 import ru.volkov.guest.util.exception.AuthException;
+import ru.volkov.guest.view.RootView;
 import ru.volkov.guest.view.admin.pass.PassesView;
 import ru.volkov.guest.view.admin.user.UsersView;
 import ru.volkov.guest.view.getpass.GetPassView;
@@ -28,6 +30,7 @@ import ru.volkov.guest.view.login.LogOutView;
 import ru.volkov.guest.view.meet.MeetView;
 import ru.volkov.guest.view.settings.SettingsView;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +56,8 @@ public class AuthService {
         } else if (user.isValidPassword(password) && user.getEnabled()) {
             VaadinSession.getCurrent().setAttribute(User.class, user);
             createRoutes(user.getRole());
+            user.setLastActivity(LocalDateTime.now());
+            userService.update(user);
         } else {
             throw new AuthException("Password incorrect");
         }
@@ -61,7 +66,7 @@ public class AuthService {
     private void createRoutes(Role role) {
         getAuthRoutes(role).forEach(route ->
                 RouteConfiguration.forSessionScope()
-                        .setRoute(route.path, route.view, MainAppLayout.class));
+                        .setRoute(route.path, route.view, RootView.class));
     }
 
     public List<Routes> getAuthRoutes(Role role) {
@@ -139,6 +144,14 @@ public class AuthService {
 
         public static Tab[] asTabs(List<Routes> routes) {
             return routes.stream().map(Routes::asTab).toArray(Tab[]::new);
+        }
+
+        public static LeftNavigationItem asLeftNavigationItem(Routes route) {
+            return new LeftNavigationItem(route.name, route.icon.create(), route.view);
+        }
+
+        public static LeftNavigationItem[] asLeftNavigationItems(List<Routes> routes) {
+            return routes.stream().map(Routes::asLeftNavigationItem).toArray(LeftNavigationItem[]::new);
         }
     }
 }

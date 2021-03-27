@@ -48,7 +48,7 @@ public class User extends AbstractEntity implements Serializable {
     @Formula("(SELECT COUNT(*) FROM Car_Pass cp WHERE cp.user_id = id)")
     private int passCount;
 
-    @GridHeader(name = "Last activity")
+//    @GridHeader(name = "Last activity")
     private LocalDateTime lastActivity = LocalDateTime.now();
 
     @GridHeader(name = "Registration date")

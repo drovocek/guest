@@ -1,6 +1,7 @@
 package ru.volkov.guest.view.admin.user;
 
 import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -14,6 +15,7 @@ import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
+import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.PageTitle;
@@ -27,6 +29,7 @@ import ru.volkov.guest.data.entity.User;
 import ru.volkov.guest.data.service.AuthService;
 import ru.volkov.guest.data.service.MailService;
 import ru.volkov.guest.data.service.user.UserService;
+import ru.volkov.guest.view.RootView;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -89,7 +92,11 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
                 createIconComponentByBoolean(user.getEnabled(), () -> changeEnabled(user.getId())))
                 .setHeader("Enabled")
                 .setSortProperty("enabled");
+
         addColumns(grid, User.class);
+
+        grid.addColumn(new LocalDateTimeRenderer<>(User::getLastActivity))
+                .setHeader("Last activity");
     }
 
     private void addGridListeners(Grid<User> grid) {
@@ -137,6 +144,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
             userService.update(user);
             refreshGrid();
             getDefNotify("Status updated").addThemeName("success");
+            showInRoot("Status updated", "Status updated");
             return true;
         }).orElseThrow(() -> new NotFoundException("User not found"));
     }
@@ -210,14 +218,23 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
 
         userService.update(user);
         getDefNotify("User created").addThemeName("success");
+        showInRoot("User created", "User updated");
     }
 
     private void update(User user, Integer rootId) {
         if (user.getRootId() == null || user.getRootId().equals(rootId)) {
             userService.update(user);
             getDefNotify("User updated").addThemeName("success");
+            showInRoot("Success updated", "User updated");
         } else {
             getDefNotify("You is not root, can't update not yours, choose another").addThemeName("error");
+            showInRoot("Update aborted", "You is not root, can't update not yours, choose another");
         }
+    }
+
+    public void showInRoot(String title, String description) {
+        UI.getCurrent().getChildren()
+                .filter(component -> component.getClass() == RootView.class)
+                .findFirst().ifPresent(root -> ((RootView) root).setNotify(title, description));
     }
 }
