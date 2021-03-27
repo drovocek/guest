@@ -18,22 +18,24 @@ import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.templatemodel.TemplateModel;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import org.vaadin.textfieldformatter.CustomStringBlockFormatter.Builder;
 import ru.volkov.guest.data.entity.Role;
 import ru.volkov.guest.data.entity.User;
 import ru.volkov.guest.data.service.AuthService;
+import ru.volkov.guest.data.service.MailService;
 import ru.volkov.guest.data.service.user.UserService;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Optional;
 
 import static ru.volkov.guest.data.entity.Role.*;
 import static ru.volkov.guest.util.ConfigHelper.*;
 
+@RequiredArgsConstructor
 @JsModule("./views/admin/user/user-view.js")
 @CssImport("./views/admin/user/user-view.css")
 @Tag("user-view")
@@ -57,19 +59,15 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     @Id("grid")
     private Grid<User> grid;
 
-    private BeanValidationBinder<User> binder;
-
     private final AuthService authService;
     private final UserService userService;
-    private final MailSender mailSender;
+    private final MailService mailService;
 
+    private final BeanValidationBinder<User> binder = new BeanValidationBinder<>(User.class);
     private User user = new User();
 
-    public UsersView(UserService userService, AuthService authService, MailSender mailSender) {
-        this.authService = authService;
-        this.userService = userService;
-        this.mailSender = mailSender;
-
+    @PostConstruct
+    private void initView() {
         initGrid();
         initForm();
     }
@@ -109,7 +107,6 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     }
 
     private void addFormBinder() {
-        binder = new BeanValidationBinder<>(User.class);
         binder.forField(fullName)
                 .withValidator(name -> name.length() > 3, "Name size must be more then 5")
                 .bind("fullName");
@@ -199,18 +196,18 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         String userName = user.getEmail().substring(0, user.getEmail().indexOf("@"));
         user.setUserName(userName);
         user.setRootId(rootId);
+
         user.setActivationCode(RandomStringUtils.randomAlphanumeric(32));
         String activationUrl =
                 TEST_ROOT
 //                PROD_ROOT
-                .concat("registration?code=")
-                .concat(user.getActivationCode());
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("guest@app.com");
-        message.setTo(user.getEmail());
-        message.setSubject("Confirmation email");
-        message.setText(activationUrl);
-        mailSender.send(message);
+                        .concat("registration?code=")
+                        .concat(user.getActivationCode());
+        mailService.sendMessage(
+                user.getEmail(),
+                activationUrl,
+                "Confirmation email");
+
         userService.update(user);
         getDefNotify("User created").addThemeName("success");
     }

@@ -41,7 +41,7 @@ public class User extends AbstractEntity implements Serializable {
     private String phone;
 
     @GridHeader(name = "Child users")
-    @Formula("(SELECT COUNT(*) FROM User u WHERE u.id = root_id)")
+    @Formula("(SELECT COUNT(*) FROM User u WHERE u.root_id = id)")
     private int childrenCount;
 
     @GridHeader(name = "Pass count")

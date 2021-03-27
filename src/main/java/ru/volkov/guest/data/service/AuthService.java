@@ -11,10 +11,9 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import ru.volkov.guest.MainAppLayout;
 import ru.volkov.guest.data.entity.Role;
@@ -38,19 +37,15 @@ import static ru.volkov.guest.data.service.AuthService.Routes.USERS;
 import static ru.volkov.guest.data.service.AuthService.Routes.*;
 
 @UIScope
+@RequiredArgsConstructor
 @Service
 public class AuthService {
 
-    private final UserService service;
-    private final MailSender mailSender;
-
-    public AuthService(UserService service, MailSender mailSender) {
-        this.service = service;
-        this.mailSender = mailSender;
-    }
+    private final UserService userService;
+    private final MailService mailService;
 
     public void authenticate(String userName, String password) {
-        User user = service.getByUserName(userName);
+        User user = userService.getByUserName(userName);
         if (user.getPasswordHash() == null) {
             UI.getCurrent().navigate("registration",
                     new QueryParameters(
@@ -87,15 +82,12 @@ public class AuthService {
     }
 
     public void activate(String password, String activationCode) {
-        User user = service.getByActivationCode(activationCode);
+        User user = userService.getByActivationCode(activationCode);
         updatePassword(user, password);
-        String registrationInfo = String.format("Login: %s \nPassword: %s", user.getUserName(), password);
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("guest@app.com");
-        message.setTo(user.getEmail());
-        message.setSubject("Registration info");
-        message.setText(registrationInfo);
-        mailSender.send(message);
+        mailService.sendMessage(
+                user.getEmail(),
+                String.format("Login: %s \nPassword: %s", user.getUserName(), password),
+                "Registration info");
     }
 
     public void refreshPassword(String password) {
@@ -103,7 +95,7 @@ public class AuthService {
     }
 
     public boolean isActivated(String code) {
-        return service.isActivated(code);
+        return userService.isActivated(code);
     }
 
     public void updatePassword(User user, String password) {
@@ -112,7 +104,7 @@ public class AuthService {
         user.setPasswordSalt(passwordSalt);
         user.setPasswordHash(passwordHash);
         user.setEnabled(true);
-        service.update(user);
+        userService.update(user);
     }
 
     @Getter
