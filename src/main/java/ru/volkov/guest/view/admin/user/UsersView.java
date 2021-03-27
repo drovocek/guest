@@ -207,8 +207,8 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
 
         user.setActivationCode(RandomStringUtils.randomAlphanumeric(32));
         String activationUrl =
-                TEST_ROOT
-//                PROD_ROOT
+//                TEST_ROOT
+                PROD_ROOT
                         .concat("registration?code=")
                         .concat(user.getActivationCode());
         mailService.sendMessage(
