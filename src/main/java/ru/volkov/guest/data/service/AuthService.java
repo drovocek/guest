@@ -13,6 +13,8 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.Getter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import ru.volkov.guest.MainAppLayout;
 import ru.volkov.guest.data.entity.Role;
@@ -40,9 +42,11 @@ import static ru.volkov.guest.data.service.AuthService.Routes.*;
 public class AuthService {
 
     private final UserService service;
+    private final MailSender mailSender;
 
-    public AuthService(UserService service) {
+    public AuthService(UserService service, MailSender mailSender) {
         this.service = service;
+        this.mailSender = mailSender;
     }
 
     public void authenticate(String userName, String password) {
@@ -85,6 +89,13 @@ public class AuthService {
     public void activate(String password, String activationCode) {
         User user = service.getByActivationCode(activationCode);
         updatePassword(user, password);
+        String registrationInfo = String.format("Login: %s \nPassword: %s", user.getUserName(), password);
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("guest@app.com");
+        message.setTo(user.getEmail());
+        message.setSubject("Registration info");
+        message.setText(registrationInfo);
+        mailSender.send(message);
     }
 
     public void refreshPassword(String password) {

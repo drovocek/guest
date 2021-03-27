@@ -200,15 +200,17 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         user.setUserName(userName);
         user.setRootId(rootId);
         user.setActivationCode(RandomStringUtils.randomAlphanumeric(32));
-//        String activationUrl = TEST_ROOT
-//                .concat("registration?code=")
-//                .concat(user.getActivationCode());
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom("guest@app.com");
-//        message.setSubject("Confirmation email");
-//        message.setText(activationUrl);
-//        message.setTo(user.getEmail());
-//        mailSender.send(message);
+        String activationUrl =
+                TEST_ROOT
+//                PROD_ROOT
+                .concat("registration?code=")
+                .concat(user.getActivationCode());
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("guest@app.com");
+        message.setTo(user.getEmail());
+        message.setSubject("Confirmation email");
+        message.setText(activationUrl);
+        mailSender.send(message);
         userService.update(user);
         getDefNotify("User created").addThemeName("success");
     }
