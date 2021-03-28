@@ -8,9 +8,11 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.polymertemplate.EventHandler;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.polymertemplate.Id;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -25,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import org.vaadin.erik.SlideMode;
+import org.vaadin.erik.SlideTab;
 import org.vaadin.erik.SlideTabBuilder;
 import org.vaadin.erik.SlideTabPosition;
 import org.vaadin.textfieldformatter.CustomStringBlockFormatter.Builder;
@@ -52,16 +55,23 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     private final static String PROD_ROOT = "https://getpass.herokuapp.com/";
     private final static String TEST_ROOT = "http://localhost:8080/";
 
-    @Id("role")
-    private ComboBox<Role> role;
-    @Id("phone")
-    private TextField phone;
-    @Id("fullName")
-    private TextField fullName;
-    @Id("email")
-    private EmailField email;
-    @Id("enabled")
-    private Checkbox enabled;
+    private final ComboBox<Role> role = new ComboBox<>("Role");
+    private final TextField fullName = new TextField("Full name");
+    private final TextField phone = new TextField("Phone");
+    private final EmailField email = new EmailField("Email");
+    private final Checkbox enabled = new Checkbox("Enabled");
+
+    private final Button save = new Button("Save");
+    private final Button clear = new Button("Cancel");
+    private final HorizontalLayout buttonsGroup = new HorizontalLayout(save, clear);
+    private final Div form = new Div(role, fullName, phone, email, enabled, buttonsGroup);
+
+    private final SlideTab formTab = new SlideTabBuilder(form, "Form")
+            .mode(SlideMode.BOTTOM)
+            .autoCollapseSlider(false)
+            .tabPosition(SlideTabPosition.BEGINNING)
+            .autoCollapseSlider(true)
+            .build();
 
     @Id("grid")
     private Grid<User> grid;
@@ -77,11 +87,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     private void initView() {
         initGrid();
         initForm();
-
-        new SlideTabBuilder(new Button(), "Form")
-                .mode(SlideMode.LEFT)
-                .tabPosition(SlideTabPosition.MIDDLE)
-                .build();
+        getElement().appendChild(formTab.getElement());
     }
 
     private void initGrid() {
@@ -92,8 +98,45 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     }
 
     private void initForm() {
-        addFormBinder();
-        configFormComponents();
+        initBinder();
+        initFields();
+        initButtons();
+    }
+
+    private void initFields() {
+        role.setRequired(true);
+        role.setItems(COMPANY, GUARD, EMPLOYEE);
+        role.setValue(COMPANY);
+
+        fullName.setPlaceholder("User full name");
+        fullName.setClearButtonVisible(true);
+        fullName.setMinLength(3);
+        fullName.setMaxLength(40);
+        fullName.setRequired(true);
+
+        email.setPlaceholder("user@email.com");
+        email.setClearButtonVisible(true);
+        email.setMinLength(3);
+        email.setMaxLength(40);
+        email.setRequiredIndicatorVisible(true);
+
+        phone.setClearButtonVisible(true);
+        phone.setMinLength(18);
+        phone.setMaxLength(18);
+        phone.setRequired(true);
+        new Builder()
+                .blocks(0, 3, 3, 2, 2)
+                .delimiters("(", ") ", "-", "-")
+                .prefix("+7", true, " ")
+                .numeric()
+                .build().extend(phone);
+    }
+
+    private void initButtons() {
+        save.addThemeName("primary");
+        save.addClickListener(event -> save());
+        clear.addThemeName("tertiary");
+        clear.addClickListener(event -> clear());
     }
 
     private void addGridColumns(Grid<User> grid) {
@@ -122,7 +165,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
                         ));
     }
 
-    private void addFormBinder() {
+    private void initBinder() {
         binder.forField(fullName)
                 .withValidator(name -> name.length() > 3, "Name size must be more then 5")
                 .bind("fullName");
@@ -133,18 +176,6 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
                 .withValidator(phone -> phone.length() == 18, "Enter a valid phone number")
                 .bind("phone");
         binder.bindInstanceFields(this);
-    }
-
-    private void configFormComponents() {
-        role.setItems(COMPANY, GUARD, EMPLOYEE);
-        role.setValue(COMPANY);
-
-        new Builder()
-                .blocks(0, 3, 3, 2, 2)
-                .delimiters("(", ") ", "-", "-")
-                .prefix("+7", true, " ")
-                .numeric()
-                .build().extend(phone);
     }
 
     private void changeEnabled(Integer id) {
@@ -188,13 +219,11 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         return icon;
     }
 
-    @EventHandler
     public void clear() {
         clearForm();
         refreshGrid();
     }
 
-    @EventHandler
     public void save() {
         if (binder.writeBeanIfValid(this.user)) {
             authService.getAuthUser().ifPresent(authUser -> {
