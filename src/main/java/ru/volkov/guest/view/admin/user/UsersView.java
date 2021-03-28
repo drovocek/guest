@@ -2,6 +2,7 @@ package ru.volkov.guest.view.admin.user;
 
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -23,6 +24,9 @@ import com.vaadin.flow.templatemodel.TemplateModel;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
+import org.vaadin.erik.SlideMode;
+import org.vaadin.erik.SlideTabBuilder;
+import org.vaadin.erik.SlideTabPosition;
 import org.vaadin.textfieldformatter.CustomStringBlockFormatter.Builder;
 import ru.volkov.guest.data.entity.Role;
 import ru.volkov.guest.data.entity.User;
@@ -73,6 +77,11 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     private void initView() {
         initGrid();
         initForm();
+
+        new SlideTabBuilder(new Button(), "Form")
+                .mode(SlideMode.LEFT)
+                .tabPosition(SlideTabPosition.MIDDLE)
+                .build();
     }
 
     private void initGrid() {

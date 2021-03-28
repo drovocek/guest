@@ -32,7 +32,7 @@ class UserView extends PolymerElement {
                             ></vaadin-combo-box>
                             <vaadin-text-field
                                     id="fullName"
-                                    label="Full name" 
+                                    label="Full name"
                                     placeholder="User full name"
                                     clear-button-visible
                                     minlength="3"
@@ -56,7 +56,7 @@ class UserView extends PolymerElement {
                                     required="true"
                             ></vaadin-text-field>
                             <vaadin-checkbox-group label="Enabled" theme="vertical">
-                                <vaadin-checkbox 
+                                <vaadin-checkbox
                                         id="enabled"
                                 ></vaadin-checkbox>
                             </vaadin-checkbox-group>

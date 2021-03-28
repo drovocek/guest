@@ -41,27 +41,27 @@ public class DataGenerator {
                     new User(1, "company", "OOO COMPANY", "OOO OWNER", "company@email.ru", "+5 (555) 555-55-55", Role.COMPANY, "company"),
                     new User(1, "rogacopita", "OOO ROGA&COPITA", "OOO OWNER", "rogacopita@email.ru", "+8 (888) 888-88-88", Role.COMPANY, "company"),
                     new User(3, "employee", "Employee Ivan", "OOO COMPANY", "employee@email.ru", "+4 (444) 444-44-44", Role.EMPLOYEE, "employee"),
-                    new User(3, "mhsn", "Anansky Andrey", "OOO ROGA&COPITA", "mhsn@email.ru", "+9 (999) 999-99-99", Role.EMPLOYEE, "mhsn")
+                    new User(4, "mhsn", "Anansky Andrey", "OOO ROGA&COPITA", "mhsn@email.ru", "+9 (999) 999-99-99", Role.EMPLOYEE, "mhsn")
             );
             userRepository.saveAll(users);
 
-            List<CarPass> passesOwner = generateCarPass(36);
+            List<CarPass> passesOwner = generateCarPass(36,0);
             passesOwner.forEach(p -> p.setUser(users.get(0)));
             carPassRepository.saveAll(passesOwner);
 
-            List<CarPass> passesCompany = generateCarPass(27);
+            List<CarPass> passesCompany = generateCarPass(27,0);
             passesCompany.forEach(p -> p.setUser(users.get(2)));
             carPassRepository.saveAll(passesCompany);
 
-            List<CarPass> passesEmployee = generateCarPass(10);
+            List<CarPass> passesEmployee = generateCarPass(10,3);
             passesEmployee.forEach(p -> p.setUser(users.get(4)));
             carPassRepository.saveAll(passesEmployee);
 
-            List<CarPass> passesRoga = generateCarPass(20);
+            List<CarPass> passesRoga = generateCarPass(20,4);
             passesRoga.forEach(p -> p.setUser(users.get(3)));
             carPassRepository.saveAll(passesRoga);
 
-            List<CarPass> passesMhsn = generateCarPass(77);
+            List<CarPass> passesMhsn = generateCarPass(77,4);
             passesMhsn.forEach(p -> p.setUser(users.get(5)));
             carPassRepository.saveAll(passesMhsn);
 
@@ -69,8 +69,8 @@ public class DataGenerator {
         };
     }
 
-    private List<CarPass> generateCarPass(int count) {
-        return Stream.generate(() -> new CarPass(3, generateRandomHexString(7), rndDate(7)))
+    private List<CarPass> generateCarPass(int count, int root) {
+        return Stream.generate(() -> new CarPass(root, generateRandomHexString(7), rndDate(7)))
                 .limit(count)
                 .collect(Collectors.toList());
     }
