@@ -70,7 +70,6 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
             .mode(SlideMode.BOTTOM)
             .autoCollapseSlider(false)
             .tabPosition(SlideTabPosition.BEGINNING)
-            .autoCollapseSlider(true)
             .build();
 
     @Id("grid")
