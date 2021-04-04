@@ -79,7 +79,6 @@ public final class ConfigHelper {
     public static void addGridStyles(Grid<?> grid) {
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
-        grid.setSizeFull();
     }
 
     private final static class CashStorage {

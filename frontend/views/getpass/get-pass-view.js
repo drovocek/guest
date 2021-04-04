@@ -17,34 +17,25 @@ class GetPassView extends PolymerElement {
     static get template() {
         // language=HTML
         return html`
-            <vaadin-form-layout>
-                <vaadin-form-item>
-                    <h3>Pass info</h3>
-                </vaadin-form-item>
+            <vaadin-vertical-layout>
+                <h3>Pass info</h3>
                 <br>
-                <vaadin-form-item>
-                    <vaadin-text-field
-                            id="regNum"
-                            label="Registration number"
-                            placeholder="c065mk78"
-                    ></vaadin-text-field>
-                </vaadin-form-item>
+                <vaadin-text-field
+                        id="regNum"
+                        label="Registration number"
+                        placeholder="c065mk78"
+                ></vaadin-text-field>
                 <br>
-                <vaadin-form-item>
-                    <vaadin-date-picker
-                            id="arrivalDate"
-                            label="Arrival date"
-                    ></vaadin-date-picker>
-                </vaadin-form-item>
+                <vaadin-date-picker
+                        id="arrivalDate"
+                        label="Arrival date"
+                ></vaadin-date-picker>
                 <br>
-                <vaadin-form-item>
-                    <vaadin-horizontal-layout>
-                        <vaadin-button class="enter" id="enter" on-click="save">Get</vaadin-button>
-                        <vaadin-button class="clear" id="clear" on-click="clearForm">Clear</vaadin-button>
-                    </vaadin-horizontal-layout>
-                </vaadin-form-item>
-            </vaadin-form-layout>
-
+                <vaadin-horizontal-layout>
+                    <vaadin-button class="enter" id="enter" on-click="save">Get</vaadin-button>
+                    <vaadin-button class="clear" id="clear" on-click="clearForm">Clear</vaadin-button>
+                </vaadin-horizontal-layout>
+            </vaadin-vertical-layout>
         `;
     }
 

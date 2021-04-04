@@ -18,7 +18,11 @@ class UserView extends PolymerElement {
     static get template() {
         // language=HTML
         return html`
-            <vaadin-grid id="grid"></vaadin-grid>
+            <vaadin-verical-layout style="width: 100%; height: 100%;">
+                <div class="grid-wrapper">
+                    <vaadin-grid id="grid"></vaadin-grid>
+                </div>
+            </vaadin-verical-layout>
         `;
     }
 

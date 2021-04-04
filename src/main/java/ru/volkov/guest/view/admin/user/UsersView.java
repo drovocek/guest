@@ -58,12 +58,11 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     private final TextField fullName = new TextField("Full name");
     private final TextField phone = new TextField("Phone");
     private final EmailField email = new EmailField("Email");
-    private final Checkbox enabled = new Checkbox("Enabled");
 
     private final Button save = new Button("Save");
     private final Button clear = new Button("Clear");
     private final HorizontalLayout buttonsGroup = new HorizontalLayout(save, clear);
-    private final Div form = new Div(role, fullName, phone, email, enabled, buttonsGroup);
+    private final Div form = new Div(role, fullName, phone, email, buttonsGroup);
 
     private final SlideTab formTab = new SlideTabBuilder(form, "Form")
             .mode(SlideMode.BOTTOM)

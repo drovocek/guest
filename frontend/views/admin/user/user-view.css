@@ -5,15 +5,23 @@
 
 user-view {
     display: flex;
-    width: 100%;
     height: 100%;
     flex-direction: column;
 }
 
+user-view .grid-wrapper {
+    flex-grow: 1;
+    width: 100%;
+    height: 90vh;
+}
+
+user-view .full-size {
+    width: 100%;
+    height: 100%;
+}
+
 user-view vaadin-grid {
-    width: auto;
-    min-height: 40vw;
-    height: 100vw;
+    height: 100%;
 }
 
 user-view .form {
