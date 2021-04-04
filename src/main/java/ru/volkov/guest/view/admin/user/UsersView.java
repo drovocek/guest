@@ -134,16 +134,6 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         form.setClassName("form");
         save.addClassName("confirmButton");
         clear.addClassName("clearButton");
-//
-//        save.addThemeName("primary small");
-//        clear.addThemeName("small");
-//
-//        role.getStyle().set("margin", "10px");
-//        fullName.getStyle().set("margin", "10px");
-//        email.getStyle().set("margin", "10px");
-//        phone.getStyle().set("margin", "10px");
-//        enabled.getStyle().set("margin", "10px");
-//        enabled.getStyle().set("color", "#1B2B41B8");
 
         addGridStyles(grid);
     }
