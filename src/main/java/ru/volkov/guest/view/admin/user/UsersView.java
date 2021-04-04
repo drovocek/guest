@@ -12,7 +12,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.polymertemplate.Id;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -62,7 +61,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     private final Checkbox enabled = new Checkbox("Enabled");
 
     private final Button save = new Button("Save");
-    private final Button clear = new Button("Cancel");
+    private final Button clear = new Button("Clear");
     private final HorizontalLayout buttonsGroup = new HorizontalLayout(save, clear);
     private final Div form = new Div(role, fullName, phone, email, enabled, buttonsGroup);
 
@@ -92,7 +91,6 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     private void initGrid() {
         addGridColumns(grid);
         addGridListeners(grid);
-        addGridStyles(grid);
         grid.setDataProvider(new CrudServiceDataProvider<>(userService));
     }
 
@@ -100,6 +98,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         initBinder();
         initFields();
         initButtons();
+        styleConfig();
     }
 
     private void initFields() {
@@ -131,10 +130,26 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
                 .build().extend(phone);
     }
 
+    private void styleConfig(){
+        save.addThemeName("primary small");
+        clear.addThemeName("small");
+
+        role.getStyle().set("margin", "10px");
+        fullName.getStyle().set("margin", "10px");
+        email.getStyle().set("margin", "10px");
+        phone.getStyle().set("margin", "10px");
+        enabled.getStyle().set("margin", "10px");
+        enabled.getStyle().set("color", "#1B2B41B8");
+
+        form.getStyle().set("background", "white");
+        form.getStyle().set("margin", "20px");
+        form.setSizeFull();
+
+        addGridStyles(grid);
+    }
+
     private void initButtons() {
-        save.addThemeName("primary");
         save.addClickListener(event -> save());
-        clear.addThemeName("tertiary");
         clear.addClickListener(event -> clear());
     }
 
@@ -157,11 +172,16 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
                                 bean -> {
                                     System.out.println("bean: " + bean);
                                     this.user = userService.getById(bean.getId());
-                                    System.out.println("user: " + bean);
                                     populateForm(user);
-                                },
-                                this::clearForm
-                        ));
+                                    if (!formTab.isExpanded()) {
+                                        formTab.toggle();
+                                    }
+                                }, () -> {
+                                    if (formTab.isExpanded()) {
+                                        formTab.toggle();
+                                    }
+                                    clearForm();
+                                }));
     }
 
     private void initBinder() {
@@ -232,6 +252,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
                     update(user, authUser.getId());
                 }
                 clearForm();
+                formTab.toggle();
                 refreshGrid();
             });
         }
