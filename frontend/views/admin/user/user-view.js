@@ -18,12 +18,12 @@ class UserView extends PolymerElement {
     static get template() {
         // language=HTML
         return html`
-            <vaadin-split-layout style="width: 100%; height: 100%;">
+            <vaadin-verical-layout style="width: 100%; height: 100%;">
                 <div style="flex-grow:1;width:100%;" id="grid-wrapper">
                     <vaadin-grid id="grid"></vaadin-grid>
                 </div>
-                <div style="width:400px;display:flex;flex-direction:column;">
-                    <div style="padding:var(--lumo-space-l);flex-grow:1;">
+<!--                <slide-tab class="bottom start">-->
+                    <div id="formDiv" style="padding:var(--lumo-space-l);flex-grow:1;">
                         <vaadin-form-layout>
                             <vaadin-combo-box
                                     id="role"
@@ -60,17 +60,14 @@ class UserView extends PolymerElement {
                                         id="enabled"
                                 ></vaadin-checkbox>
                             </vaadin-checkbox-group>
+                            <vaadin-horizontal-layout>
+                                <vaadin-button theme="primary" id="enter" on-click="save">Save</vaadin-button>
+                                <vaadin-button theme="primary" id="clear" on-click="clear">Cancel</vaadin-button>
+                            </vaadin-horizontal-layout>
                         </vaadin-form-layout>
                     </div>
-                    <vaadin-horizontal-layout
-                            style="flex-wrap:wrap;width:100%;background-color:var(--lumo-contrast-5pct);padding:var(--lumo-space-s) var(--lumo-space-l);"
-                            theme="spacing"
-                    >
-                        <vaadin-button theme="primary" id="enter" on-click="save">Save</vaadin-button>
-                        <vaadin-button theme="tertiary" slot="" id="clear" on-click="clear">Cancel</vaadin-button>
-                    </vaadin-horizontal-layout>
-                </div>
-            </vaadin-split-layout>
+<!--                </slide-tab>-->
+            </vaadin-verical-layout>
         `;
     }
 

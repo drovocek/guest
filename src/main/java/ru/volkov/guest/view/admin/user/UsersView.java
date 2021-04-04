@@ -1,13 +1,14 @@
 package ru.volkov.guest.view.admin.user;
 
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.polymertemplate.EventHandler;
@@ -18,6 +19,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.data.validator.EmailValidator;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.templatemodel.TemplateModel;
@@ -25,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import org.vaadin.erik.SlideMode;
+import org.vaadin.erik.SlideTab;
 import org.vaadin.erik.SlideTabBuilder;
 import org.vaadin.erik.SlideTabPosition;
 import org.vaadin.textfieldformatter.CustomStringBlockFormatter.Builder;
@@ -38,6 +41,7 @@ import ru.volkov.guest.view.RootView;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static ru.volkov.guest.data.entity.Role.*;
 import static ru.volkov.guest.util.ConfigHelper.*;
@@ -52,6 +56,8 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     private final static String PROD_ROOT = "https://getpass.herokuapp.com/";
     private final static String TEST_ROOT = "http://localhost:8080/";
 
+    @Id("formDiv")
+    private Div formDiv;
     @Id("role")
     private ComboBox<Role> role;
     @Id("phone")
@@ -77,11 +83,21 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     private void initView() {
         initGrid();
         initForm();
+    }
 
-        new SlideTabBuilder(new Button(), "Form")
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        Stream<Element> children = formDiv.getElement().getChildren();
+        formDiv.getElement().getChildren().forEach(Element::removeFromTree);
+        formDiv.getElement().removeFromTree();
+        children.forEach(ch->formDiv.getElement().appendChild(ch));
+
+        SlideTab slideTab = new SlideTabBuilder(formDiv, "Form")
                 .mode(SlideMode.LEFT)
                 .tabPosition(SlideTabPosition.MIDDLE)
                 .build();
+
+        getElement().appendChild(slideTab.getElement());
     }
 
     private void initGrid() {
