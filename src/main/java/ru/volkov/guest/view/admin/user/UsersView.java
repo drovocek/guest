@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import org.vaadin.erik.SlideMode;
+import org.vaadin.erik.SlideTab;
 import org.vaadin.erik.SlideTabBuilder;
 import org.vaadin.erik.SlideTabPosition;
 import org.vaadin.textfieldformatter.CustomStringBlockFormatter.Builder;
@@ -129,20 +130,20 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
                 .build().extend(phone);
     }
 
-    private void styleConfig(){
-        save.addThemeName("primary small");
-        clear.addThemeName("small");
-
-        role.getStyle().set("margin", "10px");
-        fullName.getStyle().set("margin", "10px");
-        email.getStyle().set("margin", "10px");
-        phone.getStyle().set("margin", "10px");
-        enabled.getStyle().set("margin", "10px");
-        enabled.getStyle().set("color", "#1B2B41B8");
-
-        form.getStyle().set("background", "white");
-        form.getStyle().set("margin", "20px");
-        form.setSizeFull();
+    private void styleConfig() {
+        form.setClassName("form");
+        save.addClassName("confirmButton");
+        clear.addClassName("clearButton");
+//
+//        save.addThemeName("primary small");
+//        clear.addThemeName("small");
+//
+//        role.getStyle().set("margin", "10px");
+//        fullName.getStyle().set("margin", "10px");
+//        email.getStyle().set("margin", "10px");
+//        phone.getStyle().set("margin", "10px");
+//        enabled.getStyle().set("margin", "10px");
+//        enabled.getStyle().set("color", "#1B2B41B8");
 
         addGridStyles(grid);
     }
@@ -237,13 +238,11 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         return icon;
     }
 
-    @EventHandler
     public void clear() {
         clearForm();
         refreshGrid();
     }
 
-    @EventHandler
     public void save() {
         if (binder.writeBeanIfValid(this.user)) {
             authService.getAuthUser().ifPresent(authUser -> {
