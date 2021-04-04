@@ -5,9 +5,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.vaadin.artur.helpers.CrudService;
 import ru.volkov.guest.data.entity.CarPass;
+import ru.volkov.guest.data.entity.User;
+import ru.volkov.guest.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static ru.volkov.guest.util.ConfigHelper.getDefNotify;
 
 @Service
 public class CarPassService extends CrudService<CarPass, Integer> {
@@ -32,5 +36,9 @@ public class CarPassService extends CrudService<CarPass, Integer> {
 
     public List<CarPass> getAllSorted() {
         return repository.findAll(statAndDate);
+    }
+
+    public CarPass getById(Integer id) {
+        return get(id).orElseThrow(() -> new NotFoundException("Not found user with that id"));
     }
 }

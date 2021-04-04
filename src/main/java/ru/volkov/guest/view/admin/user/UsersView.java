@@ -3,7 +3,6 @@ package ru.volkov.guest.view.admin.user;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -59,9 +58,9 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     private final TextField phone = new TextField("Phone");
     private final EmailField email = new EmailField("Email");
 
-    private final Button save = new Button("Save");
+    private final Button confirm = new Button("Update");
     private final Button clear = new Button("Clear");
-    private final HorizontalLayout buttonsGroup = new HorizontalLayout(save, clear);
+    private final HorizontalLayout buttonsGroup = new HorizontalLayout(confirm, clear);
     private final Div form = new Div(role, fullName, phone, email, buttonsGroup);
 
     private final SlideTab formTab = new SlideTabBuilder(form, "Form")
@@ -131,14 +130,14 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
 
     private void styleConfig() {
         form.setClassName("form");
-        save.addClassName("confirmButton");
+        confirm.addClassName("saveButton");
         clear.addClassName("clearButton");
 
         addGridStyles(grid);
     }
 
     private void initButtons() {
-        save.addClickListener(event -> save());
+        confirm.addClickListener(event -> save());
         clear.addClickListener(event -> clear());
     }
 
@@ -210,6 +209,15 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
 
     private void populateForm(User user) {
         binder.readBean(user);
+        if (user != null) {
+            confirm.setText("Update");
+            confirm.removeClassName("saveButton");
+            confirm.addClassName("updateButton");
+        } else {
+            confirm.setText("Save");
+            confirm.removeClassName("updateButton");
+            confirm.addClassName("saveButton");
+        }
     }
 
     private Icon createIconComponentByBoolean(boolean bool, Runnable... clickAction) {

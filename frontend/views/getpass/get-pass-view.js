@@ -17,25 +17,33 @@ class GetPassView extends PolymerElement {
     static get template() {
         // language=HTML
         return html`
-            <vaadin-vertical-layout>
-                <h3>Pass info</h3>
+            <vaadin-form-layout style="width: 100%;" class="form">
+                <vaadin-form-item>
+                    <h3>Pass info</h3>
+                </vaadin-form-item>
                 <br>
-                <vaadin-text-field
-                        id="regNum"
-                        label="Registration number"
-                        placeholder="c065mk78"
-                ></vaadin-text-field>
+                <vaadin-form-item>
+                    <vaadin-text-field
+                            id="regNum"
+                            label="Registration number"
+                            placeholder="c065mk78"
+                    ></vaadin-text-field>
+                </vaadin-form-item>
                 <br>
-                <vaadin-date-picker
-                        id="arrivalDate"
-                        label="Arrival date"
-                ></vaadin-date-picker>
+                <vaadin-form-item>
+                    <vaadin-date-picker
+                            id="arrivalDate"
+                            label="Arrival date"
+                    ></vaadin-date-picker>
+                </vaadin-form-item>
                 <br>
-                <vaadin-horizontal-layout>
-                    <vaadin-button class="enter" id="enter" on-click="save">Get</vaadin-button>
-                    <vaadin-button class="clear" id="clear" on-click="clearForm">Clear</vaadin-button>
-                </vaadin-horizontal-layout>
-            </vaadin-vertical-layout>
+                <vaadin-form-item>
+                    <vaadin-horizontal-layout>
+                        <vaadin-button class="confirmButton" id="enter" on-click="save">Get</vaadin-button>
+                        <vaadin-button class="clearButton" id="clear" on-click="clearForm">Clear</vaadin-button>
+                    </vaadin-horizontal-layout>
+                </vaadin-form-item>
+            </vaadin-form-layout>
         `;
     }
 

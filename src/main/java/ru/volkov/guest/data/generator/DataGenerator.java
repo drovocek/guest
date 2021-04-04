@@ -70,7 +70,7 @@ public class DataGenerator {
     }
 
     private List<CarPass> generateCarPass(int count, int root) {
-        return Stream.generate(() -> new CarPass(root, generateRandomHexString(7), rndDate(7)))
+        return Stream.generate(() -> new CarPass(root, generateRandomHexString(8), rndDate(7)))
                 .limit(count)
                 .collect(Collectors.toList());
     }

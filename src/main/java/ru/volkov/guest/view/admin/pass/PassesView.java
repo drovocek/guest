@@ -11,10 +11,17 @@ import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.data.provider.QuerySortOrderBuilder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.templatemodel.TemplateModel;
+import lombok.RequiredArgsConstructor;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import ru.volkov.guest.data.entity.CarPass;
 import ru.volkov.guest.data.service.carpass.CarPassService;
 
+import javax.annotation.PostConstruct;
+import java.util.Optional;
+
+import static ru.volkov.guest.util.ConfigHelper.addColumns;
+
+@RequiredArgsConstructor
 @JsModule("./views/admin/pass/pass-view.js")
 @CssImport("./views/admin/pass/pass-view.css")
 @Tag("pass-view")
@@ -24,38 +31,58 @@ public class PassesView extends PolymerTemplate<TemplateModel> {
     @Id("grid")
     private Grid<CarPass> grid;
 
-    private final CarPassService service;
+    private final CarPassService carPassService;
+    private final PassesFormView formTab;
 
-    public PassesView(CarPassService service) {
-        this.service = service;
+    @PostConstruct
+    public void initView() {
+        initGrid();
+        getElement().appendChild(formTab.getElement());
+//        addListener(SaveCarPassEvent.class, event -> {
+//            refreshGrid();
+//        });
+    }
 
-        grid.addComponentColumn((carPass) -> {
-            Icon icon;
-            if (carPass.isPassed()) {
-                icon = VaadinIcon.CHECK_SQUARE.create();
-                icon.setColor("green");
-            } else {
-                icon = VaadinIcon.SQUARE_SHADOW.create();
-                icon.setColor("orange");
-            }
-            return icon;
-        })
+    private void initGrid() {
+        addGridColumns();
+        addGridListeners();
+        addDataProvider();
+    }
+
+    private void addGridColumns() {
+        grid.addComponentColumn((carPass) -> getSquareIconByStatus(carPass.isPassed()))
                 .setHeader("Passed")
                 .setSortProperty("passed");
-        grid.addColumn(CarPass::getRegNum)
-                .setHeader("Registration Number")
-                .setSortProperty("regNum");
-        grid.addColumn(CarPass::getCreatorName)
-                .setHeader("Creator")
-                .setSortProperty("creatorName");
-        grid.addColumn(CarPass::getRootName)
-                .setHeader("Root creator")
-                .setSortProperty("rootName");
-        grid.addColumn(CarPass::getArrivalDate)
-                .setHeader("Arrival Date")
-                .setSortProperty("arrivalDate");
 
-        CrudServiceDataProvider<CarPass, Integer> dataProvider = new CrudServiceDataProvider<>(service);
+        addColumns(grid, CarPass.class);
+    }
+
+    private Icon getSquareIconByStatus(boolean status) {
+        Icon icon;
+        if (status) {
+            icon = VaadinIcon.CHECK_SQUARE.create();
+            icon.setColor("green");
+        } else {
+            icon = VaadinIcon.SQUARE_SHADOW.create();
+            icon.setColor("orange");
+        }
+        return icon;
+    }
+
+    private void addGridListeners() {
+        grid.asSingleSelect().addValueChangeListener(event ->
+                Optional.ofNullable(event.getValue())
+                        .ifPresentOrElse(
+                                bean -> {
+                                    formTab.fillAndOpen(carPassService.getById(bean.getId()));
+//                                    refreshGrid();
+                                },
+                                formTab::clearAndClose
+                        ));
+    }
+
+    private void addDataProvider() {
+        CrudServiceDataProvider<CarPass, Integer> dataProvider = new CrudServiceDataProvider<>(carPassService);
         dataProvider.setSortOrders(
                 new QuerySortOrderBuilder()
                         .thenAsc("arrivalDate")
@@ -63,5 +90,10 @@ public class PassesView extends PolymerTemplate<TemplateModel> {
                         .build());
 
         grid.setDataProvider(dataProvider);
+    }
+
+    private void refreshGrid() {
+        grid.select(null);
+        grid.getDataProvider().refreshAll();
     }
 }
