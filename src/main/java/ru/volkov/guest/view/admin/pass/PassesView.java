@@ -38,9 +38,7 @@ public class PassesView extends PolymerTemplate<TemplateModel> {
     public void initView() {
         initGrid();
         getElement().appendChild(formTab.getElement());
-//        addListener(SaveCarPassEvent.class, event -> {
-//            refreshGrid();
-//        });
+        formTab.addListener(PassesSaveEvent.class, event -> refreshGrid());
     }
 
     private void initGrid() {
@@ -73,10 +71,7 @@ public class PassesView extends PolymerTemplate<TemplateModel> {
         grid.asSingleSelect().addValueChangeListener(event ->
                 Optional.ofNullable(event.getValue())
                         .ifPresentOrElse(
-                                bean -> {
-                                    formTab.fillAndOpen(carPassService.getById(bean.getId()));
-//                                    refreshGrid();
-                                },
+                                bean -> formTab.fillAndOpen(carPassService.getById(bean.getId())),
                                 formTab::clearAndClose
                         ));
     }

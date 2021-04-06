@@ -58,7 +58,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
     private final TextField phone = new TextField("Phone");
     private final EmailField email = new EmailField("Email");
 
-    private final Button confirm = new Button("Update");
+    private final Button confirm = new Button("Add");
     private final Button clear = new Button("Clear");
     private final HorizontalLayout buttonsGroup = new HorizontalLayout(confirm, clear);
     private final Div form = new Div(role, fullName, phone, email, buttonsGroup);
@@ -214,7 +214,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
             confirm.removeClassName("saveButton");
             confirm.addClassName("updateButton");
         } else {
-            confirm.setText("Save");
+            confirm.setText("Add");
             confirm.removeClassName("updateButton");
             confirm.addClassName("saveButton");
         }

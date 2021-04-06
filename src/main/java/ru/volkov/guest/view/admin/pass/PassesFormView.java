@@ -1,5 +1,7 @@
 package ru.volkov.guest.view.admin.pass;
 
+import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -8,6 +10,9 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
+import com.vaadin.flow.router.BeforeLeaveEvent;
+import com.vaadin.flow.router.BeforeLeaveObserver;
+import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,14 +34,18 @@ import static ru.volkov.guest.util.ConfigHelper.getDefNotify;
 @VaadinSessionScope
 @RequiredArgsConstructor
 @Component
-public class PassesFormView extends Composite<SlideTab> {
+public class PassesFormView extends Composite<SlideTab> implements BeforeLeaveObserver {
 
-    private TextField regNum;
-    private DatePicker arrivalDate;
-    private Button confirm;
-    private Button clear;
-    private Div formContainer;
-    private SlideTab formTab;
+    private final TextField regNum = new TextField("Registration number");
+    private final DatePicker arrivalDate = new DatePicker("Arrival date");
+    private final Button confirm = new Button("Add");
+    private final Button clear = new Button("Clear");
+    private final Div formContainer = new Div(regNum, arrivalDate, new HorizontalLayout(confirm, clear));
+    private final SlideTab formTab = new SlideTabBuilder(formContainer, "Form")
+            .mode(SlideMode.BOTTOM)
+            .autoCollapseSlider(false)
+            .tabPosition(SlideTabPosition.BEGINNING)
+            .build();
 
     private final AuthService authService;
     private final CarPassService carPassService;
@@ -46,23 +55,21 @@ public class PassesFormView extends Composite<SlideTab> {
 
     @Override
     protected SlideTab initContent() {
-        regNum = new TextField("Registration number");
-        arrivalDate = new DatePicker("Arrival date");
-        confirm = new Button("Update");
-        clear = new Button("Clear");
-        formContainer = new Div(regNum, arrivalDate, new HorizontalLayout(confirm, clear));
-        formTab = new SlideTabBuilder(formContainer, "Form")
-                .mode(SlideMode.BOTTOM)
-                .autoCollapseSlider(false)
-                .tabPosition(SlideTabPosition.BEGINNING)
-                .build();
-
         initButtons();
         configFields();
         initBinder();
         configStyles();
-
         return formTab;
+    }
+
+    @Override
+    protected <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType, ComponentEventListener<T> listener) {
+        return super.addListener(eventType, listener);
+    }
+
+    @Override
+    public void beforeLeave(BeforeLeaveEvent beforeLeaveEvent) {
+        clearAndClose();
     }
 
     private void configStyles() {
@@ -93,8 +100,14 @@ public class PassesFormView extends Composite<SlideTab> {
     }
 
     private void initButtons() {
-        confirm.addClickListener(event -> save());
         clear.addClickListener(event -> clear());
+        confirm.addClickListener(event -> {
+            if (binder.writeBeanIfValid(this.carPass)) {
+                save();
+                clearAndClose();
+                fireEvent(new PassesSaveEvent(this, false));
+            }
+        });
     }
 
     private void clear() {
@@ -102,38 +115,36 @@ public class PassesFormView extends Composite<SlideTab> {
         binder.readBean(carPass);
         arrivalDate.setValue(LocalDate.now());
 
-        confirm.setText("Save");
+        confirm.setText("Add");
         confirm.removeClassName("updateButton");
         confirm.addClassName("saveButton");
     }
 
     public void fillAndOpen(CarPass carPass) {
         System.out.println("bean: " + carPass);
-        open();
         this.carPass = carPass;
         binder.readBean(carPass);
 
         confirm.setText("Update");
         confirm.removeClassName("saveButton");
         confirm.addClassName("updateButton");
+
+        open();
     }
 
     public void save() {
-        if (binder.writeBeanIfValid(this.carPass)) {
-            authService.getAuthUser().ifPresent(authUser -> {
-                if (carPass.getId() == null) {
-                    getDefNotify("User created").addThemeName("success");
-                    showInRoot("User created", "User updated");
-                } else if (carPass.getUser().getId().equals(authUser.getId())) {
-                    getDefNotify("Car pass updated").addThemeName("success");
-                    showInRoot("Success updated", "Car pass updated");
-                } else {
-                    throw new NotFoundException("You have not car pass with some id");
-                }
-                carPassService.update(carPass);
-                clearAndClose();
-            });
-        }
+        authService.getAuthUser().ifPresent(authUser -> {
+            if (carPass.getId() == null) {
+                getDefNotify("Pass created").addThemeName("success");
+                showInRoot("Pass created", "Pass updated");
+            } else if (carPass.getUser().getId().equals(authUser.getId())) {
+                getDefNotify("Pass updated").addThemeName("success");
+                showInRoot("Success updated", "Pass updated");
+            } else {
+                throw new NotFoundException("You have not Pass with some id");
+            }
+            carPassService.update(carPass);
+        });
     }
 
     public void showInRoot(String title, String description) {
