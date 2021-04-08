@@ -6,6 +6,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.polymertemplate.Id;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.data.provider.QuerySortOrderBuilder;
@@ -30,6 +31,8 @@ public class PassesView extends PolymerTemplate<TemplateModel> {
 
     @Id("grid")
     private Grid<CarPass> grid;
+    @Id("rootLayout")
+    private VerticalLayout rootLayout;
 
     private final CarPassService carPassService;
     private final PassesFormView formTab;
@@ -37,8 +40,8 @@ public class PassesView extends PolymerTemplate<TemplateModel> {
     @PostConstruct
     public void initView() {
         initGrid();
-        getElement().appendChild(formTab.getElement());
         formTab.addListener(PassesSaveEvent.class, event -> refreshGrid());
+        rootLayout.add(formTab);
     }
 
     private void initGrid() {

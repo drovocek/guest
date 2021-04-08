@@ -13,6 +13,8 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveObserver;
 import com.vaadin.flow.shared.Registration;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -31,9 +33,9 @@ import java.time.temporal.ChronoUnit;
 
 import static ru.volkov.guest.util.ConfigHelper.getDefNotify;
 
-@VaadinSessionScope
+@UIScope
 @RequiredArgsConstructor
-@Component
+@SpringComponent
 public class PassesFormView extends Composite<SlideTab> implements BeforeLeaveObserver {
 
     private final TextField regNum = new TextField("Registration number");

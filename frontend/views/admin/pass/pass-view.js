@@ -18,11 +18,11 @@ class PassView extends PolymerElement {
     static get template() {
         // language=HTML
         return html`
-            <vaadin-verical-layout style="width: 100%; height: 100%;">
+            <vaadin-vertical-layout id="rootLayout" style="width: 100%; height: 100%;">
                 <div class="grid-wrapper">
                     <vaadin-grid id="grid"></vaadin-grid>
                 </div>
-            </vaadin-verical-layout>
+            </vaadin-vertical-layout>
         `;
     }
 
