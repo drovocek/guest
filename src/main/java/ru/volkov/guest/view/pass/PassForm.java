@@ -34,13 +34,16 @@ import static ru.volkov.guest.util.ConfigHelper.getDefNotify;
 @UIScope
 @RequiredArgsConstructor
 @SpringComponent
-public class PassesFormView extends Composite<SlideTab> implements BeforeLeaveObserver {
+public class PassForm extends Composite<SlideTab> implements BeforeLeaveObserver {
 
     private final TextField regNum = new TextField("Registration number");
     private final DatePicker arrivalDate = new DatePicker("Arrival date");
+
     private final Button confirm = new Button("Add");
     private final Button clear = new Button("Clear");
-    private final Div formContainer = new Div(regNum, arrivalDate, new HorizontalLayout(confirm, clear));
+    private final HorizontalLayout buttonsGroup = new HorizontalLayout(confirm, clear);
+
+    private final Div formContainer = new Div(regNum, arrivalDate, buttonsGroup);
     private final SlideTab formTab = new SlideTabBuilder(formContainer, "Form")
             .mode(SlideMode.BOTTOM)
             .autoCollapseSlider(false)
@@ -63,7 +66,7 @@ public class PassesFormView extends Composite<SlideTab> implements BeforeLeaveOb
     }
 
     @Override
-    protected <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType, ComponentEventListener<T> listener) {
+    public <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType, ComponentEventListener<T> listener) {
         return super.addListener(eventType, listener);
     }
 
@@ -105,7 +108,7 @@ public class PassesFormView extends Composite<SlideTab> implements BeforeLeaveOb
             if (binder.writeBeanIfValid(this.carPass)) {
                 save();
                 clearAndClose();
-                fireEvent(new PassesSaveEvent(this, false));
+                fireEvent(new PassSaveEvent(this, false));
             }
         });
     }

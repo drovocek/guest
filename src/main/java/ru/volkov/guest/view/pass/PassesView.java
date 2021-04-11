@@ -35,24 +35,24 @@ public class PassesView extends PolymerTemplate<TemplateModel> {
     private VerticalLayout rootLayout;
 
     private final CarPassService carPassService;
-    private final PassesFormView formTab;
+    private final PassForm formTab;
 
     @PostConstruct
     public void initView() {
         initGrid();
-        formTab.addListener(PassesSaveEvent.class, event -> refreshGrid());
+        formTab.addListener(PassSaveEvent.class, event -> refreshGrid());
         rootLayout.add(formTab);
     }
 
     private void initGrid() {
-        addGridColumns();
-        addGridListeners();
-        addDataProvider();
-        addStyles();
-        addGridConfig();
+        addGridColumns(grid);
+        addGridListeners(grid, carPassService);
+        addGridStyles(grid);
+        addDataProvider(grid, carPassService);
+        addGridConfig(grid);
     }
 
-    private void addGridColumns() {
+    private void addGridColumns(Grid<CarPass> grid) {
         grid.addComponentColumn((carPass) -> getSquareIconByStatus(carPass.isPassed()))
                 .setHeader("Passed")
                 .setSortProperty("passed");
@@ -72,16 +72,16 @@ public class PassesView extends PolymerTemplate<TemplateModel> {
         return icon;
     }
 
-    private void addGridListeners() {
+    private void addGridListeners(Grid<CarPass> grid, CarPassService service) {
         grid.asSingleSelect().addValueChangeListener(event ->
                 Optional.ofNullable(event.getValue())
                         .ifPresentOrElse(
-                                bean -> formTab.fillAndOpen(carPassService.getById(bean.getId())),
+                                bean -> formTab.fillAndOpen(service.getById(bean.getId())),
                                 formTab::clearAndClose
                         ));
     }
 
-    private void addDataProvider() {
+    private void addDataProvider(Grid<CarPass> grid, CarPassService carPassService) {
         grid.setDataProvider(createCarPassDataProvider(carPassService));
     }
 
@@ -91,11 +91,7 @@ public class PassesView extends PolymerTemplate<TemplateModel> {
                 query -> carPassService.getCount());
     }
 
-    private void addStyles() {
-        addGridStyles(grid);
-    }
-
-    private void addGridConfig() {
+    private void addGridConfig(Grid<CarPass> grid) {
         grid.setMultiSort(true);
     }
 
