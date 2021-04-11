@@ -1,4 +1,4 @@
-package ru.volkov.guest.view.admin.pass;
+package ru.volkov.guest.view.pass;
 
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -9,11 +9,10 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.polymertemplate.Id;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
-import com.vaadin.flow.data.provider.QuerySortOrderBuilder;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.templatemodel.TemplateModel;
 import lombok.RequiredArgsConstructor;
-import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import ru.volkov.guest.data.entity.CarPass;
 import ru.volkov.guest.data.service.carpass.CarPassService;
 
@@ -21,10 +20,11 @@ import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 import static ru.volkov.guest.util.ConfigHelper.addColumns;
+import static ru.volkov.guest.util.ConfigHelper.addGridStyles;
 
 @RequiredArgsConstructor
-@JsModule("./views/admin/pass/pass-view.js")
-@CssImport("./views/admin/pass/pass-view.css")
+@JsModule("./views/pass/pass-view.js")
+@CssImport("./views/pass/pass-view.css")
 @Tag("pass-view")
 @PageTitle("Pass")
 public class PassesView extends PolymerTemplate<TemplateModel> {
@@ -48,6 +48,8 @@ public class PassesView extends PolymerTemplate<TemplateModel> {
         addGridColumns();
         addGridListeners();
         addDataProvider();
+        addStyles();
+        addGridConfig();
     }
 
     private void addGridColumns() {
@@ -80,14 +82,21 @@ public class PassesView extends PolymerTemplate<TemplateModel> {
     }
 
     private void addDataProvider() {
-        CrudServiceDataProvider<CarPass, Integer> dataProvider = new CrudServiceDataProvider<>(carPassService);
-        dataProvider.setSortOrders(
-                new QuerySortOrderBuilder()
-                        .thenAsc("arrivalDate")
-                        .thenDesc("regDataTime")
-                        .build());
+        grid.setDataProvider(createCarPassDataProvider(carPassService));
+    }
 
-        grid.setDataProvider(dataProvider);
+    public DataProvider<CarPass, Void> createCarPassDataProvider(CarPassService carPassService) {
+        return DataProvider.fromCallbacks(
+                query -> carPassService.getSortedPage(query.getOffset(), query.getLimit(), query.getSortOrders()),
+                query -> carPassService.getCount());
+    }
+
+    private void addStyles() {
+        addGridStyles(grid);
+    }
+
+    private void addGridConfig() {
+        grid.setMultiSort(true);
     }
 
     private void refreshGrid() {

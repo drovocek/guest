@@ -1,4 +1,4 @@
-package ru.volkov.guest.view.admin.user;
+package ru.volkov.guest.view.user;
 
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
@@ -44,8 +44,8 @@ import static ru.volkov.guest.data.entity.Role.*;
 import static ru.volkov.guest.util.ConfigHelper.*;
 
 @RequiredArgsConstructor
-@JsModule("./views/admin/user/user-view.js")
-@CssImport("./views/admin/user/user-view.css")
+@JsModule("./views/user/user-view.js")
+@CssImport("./views/user/user-view.css")
 @Tag("user-view")
 @PageTitle("User")
 public class UsersView extends PolymerTemplate<TemplateModel> {
@@ -96,7 +96,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
         initBinder();
         initFields();
         initButtons();
-        styleConfig();
+        addStyles();
     }
 
     private void initFields() {
@@ -128,7 +128,7 @@ public class UsersView extends PolymerTemplate<TemplateModel> {
                 .build().extend(phone);
     }
 
-    private void styleConfig() {
+    private void addStyles() {
         form.setClassName("form");
         confirm.addClassName("saveButton");
         clear.addClassName("clearButton");

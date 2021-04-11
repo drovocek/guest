@@ -1,4 +1,4 @@
-package ru.volkov.guest.view.admin.pass;
+package ru.volkov.guest.view.pass;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -15,9 +15,7 @@ import com.vaadin.flow.router.BeforeLeaveObserver;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
-import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.vaadin.erik.SlideMode;
 import org.vaadin.erik.SlideTab;
 import org.vaadin.erik.SlideTabBuilder;

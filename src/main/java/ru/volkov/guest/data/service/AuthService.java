@@ -16,14 +16,13 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
-import ru.volkov.guest.MainAppLayout;
 import ru.volkov.guest.data.entity.Role;
 import ru.volkov.guest.data.entity.User;
 import ru.volkov.guest.data.service.user.UserService;
 import ru.volkov.guest.util.exception.AuthException;
 import ru.volkov.guest.view.RootView;
-import ru.volkov.guest.view.admin.pass.PassesView;
-import ru.volkov.guest.view.admin.user.UsersView;
+import ru.volkov.guest.view.pass.PassesView;
+import ru.volkov.guest.view.user.UsersView;
 import ru.volkov.guest.view.getpass.GetPassView;
 import ru.volkov.guest.view.login.LogInView;
 import ru.volkov.guest.view.login.LogOutView;
@@ -71,10 +70,10 @@ public class AuthService {
 
     public List<Routes> getAuthRoutes(Role role) {
         return switch (role) {
-            case OWNER -> List.of(GET_PASS, MEET, USERS, PASSES, SETTINGS, LOG_OUT);
-            case COMPANY -> List.of(GET_PASS, USERS, PASSES, SETTINGS, LOG_OUT);
-            case EMPLOYEE -> List.of(GET_PASS, PASSES, SETTINGS, LOG_OUT);
-            case GUARD -> List.of(MEET, PASSES, SETTINGS, LOG_OUT);
+            case OWNER -> List.of(USERS, PASSES, MEET, SETTINGS, LOG_OUT); //GET_PASS
+            case COMPANY -> List.of(USERS, PASSES, SETTINGS, LOG_OUT); //GET_PASS
+            case EMPLOYEE -> List.of(PASSES, SETTINGS, LOG_OUT); //GET_PASS
+            case GUARD -> List.of(MEET, PASSES, SETTINGS, LOG_OUT); //GET_PASS
         };
     }
 

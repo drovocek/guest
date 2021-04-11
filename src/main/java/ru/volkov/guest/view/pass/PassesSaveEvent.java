@@ -1,4 +1,4 @@
-package ru.volkov.guest.view.admin.pass;
+package ru.volkov.guest.view.pass;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.spring.annotation.UIScope;
