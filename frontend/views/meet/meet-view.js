@@ -17,11 +17,7 @@ class MeetView extends PolymerElement {
     static get template() {
         // language=HTML
         return html`
-            <vaadin-vertical-layout>
-                <vaadin-form-layout >
-                    <vaadin-date-picker  label="Arrival date" id="arrivalDate"></vaadin-date-picker>
-                    <vaadin-combo-box label="Company" id="companyName"></vaadin-combo-box>
-                </vaadin-form-layout>
+            <vaadin-vertical-layout id="rootLayout" style="width: 100%; height: 100%;">
                 <vaadin-vertical-layout id="cardLayout"></vaadin-vertical-layout>
             </vaadin-vertical-layout>
         `;

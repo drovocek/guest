@@ -6,10 +6,8 @@ import com.github.appreciated.card.RippleClickableCard;
 import com.github.appreciated.config.Direction;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
@@ -26,16 +24,18 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.templatemodel.TemplateModel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.volkov.guest.data.entity.CarPass;
 import ru.volkov.guest.data.service.carpass.CarPassService;
+import ru.volkov.guest.view.RootView;
 
-import java.time.LocalDate;
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
+@RequiredArgsConstructor
 @JsModule("./views/meet/meet-view.js")
 @CssImport(value = "./views/meet/meet-view.css")
 @Tag("meet-view")
@@ -43,41 +43,25 @@ import java.util.stream.Collectors;
 @UIScope
 public class MeetView extends PolymerTemplate<TemplateModel> {
 
-    @Id("companyName")
-    private ComboBox<CarPass> companyName;
-    @Id("arrivalDate")
-    private DatePicker arrivalDate;
+    @Id("rootLayout")
+    private VerticalLayout rootLayout;
     @Id("cardLayout")
     private VerticalLayout cardLayout;
 
     private final CarPassService service;
+    private final MeetForm formTab;
 
-    public MeetView(CarPassService service) {
-        this.service = service;
-        arrivalDate.setMin(LocalDate.now());
-        arrivalDate.setValue(LocalDate.now());
-
-        companyName.setClearButtonVisible(true);
-        companyName.setItemLabelGenerator((ItemLabelGenerator<CarPass>) CarPass::getRootName);
-
-        arrivalDate.addValueChangeListener(event -> fillDataByFilters());
-        companyName.addValueChangeListener(event -> fillDataByFilters());
-
-        fillDataByFilters();
+    @PostConstruct
+    public void initView() {
+        formTab.addListener(PassFilterEvent.class, event -> refreshCards(event.getFiltered()));
+        rootLayout.add(formTab);
+        formTab.filter();
     }
 
-    private void fillDataByFilters() {
-        List<CarPass> data = service.getAllSortedByDate(arrivalDate.getValue());
-        if (!companyName.isEmpty()) {
-            data = data.stream()
-                    .filter(val -> val.getRootName().equals(companyName.getValue().getRootName()))
-                    .collect(Collectors.toList());
-        } else {
-            companyName.setItems(data);
-        }
+    private void refreshCards(List<CarPass> filtered) {
         cardLayout.removeAll();
-        data.stream()
-                .map(CarPassCardView::new)
+        filtered.stream()
+                .map(MeetView.CarPassCardView::new)
                 .map(this::getSlide)
                 .map(s -> getSwiper(s, new RippleClickableCard()))
                 .forEach(sw -> cardLayout.getElement().appendChild(sw.getElement()));
@@ -177,10 +161,17 @@ public class MeetView extends PolymerTemplate<TemplateModel> {
         service.get(id).ifPresent(cp -> {
             cp.setPassed(!cp.isPassed());
             service.update(cp);
-            fillDataByFilters();
+            formTab.filter();
             Notification
                     .show("Status updated")
                     .addThemeName("success");
+            showInRoot("Status updated", "Status updated");
         });
+    }
+
+    public void showInRoot(String title, String description) {
+        UI.getCurrent().getChildren()
+                .filter(component -> component.getClass() == RootView.class)
+                .findFirst().ifPresent(root -> ((RootView) root).setNotify(title, description));
     }
 }
