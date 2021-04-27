@@ -21,9 +21,12 @@ import org.vaadin.erik.SlideTabBuilder;
 import org.vaadin.erik.SlideTabPosition;
 import ru.volkov.guest.data.entity.CarPass;
 import ru.volkov.guest.data.service.carpass.CarPassService;
+import ru.volkov.guest.util.LogOperator;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @UIScope
@@ -47,8 +50,11 @@ public class MeetForm extends Composite<SlideTab> implements BeforeLeaveObserver
 
     private final CarPassService service;
 
+    private final LogOperator log = new LogOperator(this.getClass());
+
     @Override
     protected SlideTab initContent() {
+        log.onConsole(true).onError(false).onInfo(false);
         initButtons();
         configFields();
         configStyles();
@@ -56,43 +62,83 @@ public class MeetForm extends Composite<SlideTab> implements BeforeLeaveObserver
     }
 
     private void initButtons() {
+        log.console();
         clear.addClickListener(event -> clear());
         confirm.addClickListener(event -> filter());
     }
 
     public void filter() {
-        List<CarPass> filtered = getFiltered();
+        log.console();
+        List<CarPass> filtered = getFilteredByDate();
+        updateCompanyName(filtered);
+
+        if (companyName.getValue() != null) {
+            filtered = filterByName(filtered);
+        }
+
         fireEvent(new PassFilterEvent(this, false, filtered));
     }
 
-    private List<CarPass> getFiltered() {
-        List<CarPass> data = service.getAllSortedByDate(arrivalDate.getValue());
-        if (!companyName.isEmpty()) {
-            data = data.stream()
-                    .filter(val -> val.getRootName().equals(companyName.getValue().getRootName()))
-                    .collect(Collectors.toList());
-        } else {
-            companyName.setItems(data);
-        }
+    private List<CarPass> getFilteredByDate() {
+        log.console();
+        return service.getAllSortedByDate(arrivalDate.getValue());
+    }
 
-        return data;
+    private List<CarPass> filterByName(List<CarPass> data) {
+        return data.stream()
+                .filter(carPass -> {
+                    String dataRootName = carPass.getRootName();
+                    String filterRootName = companyName.getValue().getRootName();
+                    if (dataRootName == null && filterRootName == null) {
+                        return carPass.getCreatorName().equals(companyName.getValue().getCreatorName());
+                    } else if (dataRootName == null) {
+                        return carPass.getCreatorName().equals(filterRootName);
+                    }
+                    return dataRootName.equals(companyName.getValue().getCreatorName());
+                })
+                .collect(Collectors.toList());
+    }
+
+    private void updateCompanyName(List<CarPass> data) {
+        Map<String, CarPass> passes = new HashMap<>();
+        data.forEach(carPass -> {
+            String rootName = carPass.getRootName();
+            if (rootName == null) {
+                passes.put(carPass.getCreatorName(), carPass);
+            } else {
+                passes.put(rootName, carPass);
+            }
+        });
+        companyName.setItems(passes.values());
     }
 
     private void configStyles() {
+        log.console();
         formContainer.setClassName("form");
         confirm.addClassName("saveButton");
         clear.addClassName("clearButton");
     }
 
     private void configFields() {
+        log.console();
         arrivalDate.setMin(LocalDate.now());
         arrivalDate.setValue(LocalDate.now());
 
         companyName.setClearButtonVisible(true);
-        companyName.setItemLabelGenerator((ItemLabelGenerator<CarPass>) CarPass::getRootName);
+        companyName.setItemLabelGenerator((ItemLabelGenerator<CarPass>) carPass -> {
+            String rootName = carPass.getRootName();
+            if (rootName == null) {
+                return carPass.getCreatorName();
+            }
+            return rootName;
+        });
+
+        List<CarPass> filtered = getFilteredByDate();
+        updateCompanyName(filtered);
     }
 
     public void clearAndClose() {
+        log.console();
         if (formTab.isExpanded()) {
             formTab.toggle();
             clear();
@@ -100,6 +146,7 @@ public class MeetForm extends Composite<SlideTab> implements BeforeLeaveObserver
     }
 
     private void clear() {
+        log.console();
         arrivalDate.setValue(LocalDate.now());
         companyName.setValue(null);
     }
