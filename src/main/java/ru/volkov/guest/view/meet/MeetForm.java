@@ -70,10 +70,11 @@ public class MeetForm extends Composite<SlideTab> implements BeforeLeaveObserver
     public void filter() {
         log.console();
         List<CarPass> filtered = getFilteredByDate();
-        updateCompanyName(filtered);
 
-        if (companyName.getValue() != null) {
+        if (!companyName.isEmpty()) {
             filtered = filterByName(filtered);
+        } else {
+            updateCompanyName(filtered);
         }
 
         fireEvent(new PassFilterEvent(this, false, filtered));
@@ -85,6 +86,7 @@ public class MeetForm extends Composite<SlideTab> implements BeforeLeaveObserver
     }
 
     private List<CarPass> filterByName(List<CarPass> data) {
+        log.console();
         return data.stream()
                 .filter(carPass -> {
                     String dataRootName = carPass.getRootName();
@@ -100,6 +102,7 @@ public class MeetForm extends Composite<SlideTab> implements BeforeLeaveObserver
     }
 
     private void updateCompanyName(List<CarPass> data) {
+        log.console();
         Map<String, CarPass> passes = new HashMap<>();
         data.forEach(carPass -> {
             String rootName = carPass.getRootName();

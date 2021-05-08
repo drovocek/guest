@@ -131,8 +131,10 @@ public class MeetView extends PolymerTemplate<TemplateModel> {
                         ((Label) label).setText(carPass.getRegNum());
                         label.getElement().getStyle().set("font-weight", "bold");
                     });
+
             companyNameCover.getChildren().findFirst()
-                    .ifPresent(label -> ((Label) label).setText(carPass.getRootName()));
+                    .ifPresent(label -> ((Label) label)
+                            .setText(Optional.ofNullable(carPass.getRootName()).orElse(carPass.getCreatorName())));
 
             Icon icon;
             if (carPass.isPassed()) {
@@ -142,6 +144,7 @@ public class MeetView extends PolymerTemplate<TemplateModel> {
                 icon = VaadinIcon.SQUARE_SHADOW.create();
                 icon.setColor("orange");
             }
+
             passedCover.getElement().addEventListener("click", event -> updateDate(carPass.getId()));
             passedCover.add(icon);
 
